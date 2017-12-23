@@ -1,0 +1,31 @@
+.dropzonejs-file-container {
+  &:hover .dropzonejs-layout-hover {
+    visibility: visible;
+  }
+}
+
+.dropzonejs-layout {
+
+}
+
+.dropzonejs-layout-hover {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba($primary-color, .85);
+  color: $text-color-alt;
+  font-weight: bold;
+  font-size: 1.3rem;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+
+  &:hover {
+    visibility: visible;
+  }
+}
+
+.dropzonejs-template {
+  display: none;
+}

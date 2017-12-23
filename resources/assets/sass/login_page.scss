@@ -1,0 +1,68 @@
+$primary-color: #FF7052;
+
+body {
+  background-image: url("../images/circles-light.png");
+}
+
+#login-form {
+  border: none;
+  width: 300px;
+
+  .card-header {
+    border-radius: 0;
+    color: white;
+    font-weight: 400;
+    font-size: 1.1rem;
+    background-color: $primary-color;
+  }
+
+  .card-body {
+    #btn-submit {
+      transform: translateY(45%);
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      border-radius: 50%;
+      width: 4.5rem;
+      height: 4.5rem;
+      margin-top: -2rem;
+      background-color: white;
+      color: $primary-color;
+      position: relative;
+      border: none;
+      cursor: pointer;
+
+      &:active, &:focus {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+      }
+
+      &:hover {
+        color: white;
+        transition-duration: .3s;
+
+        &:before {
+          background-color: $primary-color;
+          transition-duration: inherit;
+        }
+      }
+
+      &:before {
+        position: absolute;
+        top: .5rem;
+        left: .5rem;
+        content: "";
+        width: 3.5rem;
+        height: 3.5rem;
+        background-color: white;
+        border: 1px solid $primary-color;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+        z-index: -1;
+      }
+    }
+
+
+  }
+}

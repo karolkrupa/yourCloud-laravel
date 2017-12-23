@@ -1,0 +1,27 @@
+@import "variables";
+
+@import "dropzonejs-file";
+
+
+.files-list {
+  th, td {
+    vertical-align: middle !important;
+  }
+
+  tr:hover {
+    background-color: rgba(255, 255, 255, 0.075);
+  }
+
+  tr.active {
+    background-color: rgba(255, 255, 255, 0.075);
+  }
+}
+
+#checkbox-select-all {
+  width: 11px;
+}
+
+#breadcrumb .breadcrumb {
+  background-color: $secondary-color;
+  border-radius: 0;
+}

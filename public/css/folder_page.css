@@ -1,0 +1,48 @@
+.dropzonejs-file-container:hover .dropzonejs-layout-hover {
+  visibility: visible;
+}
+
+.dropzonejs-layout-hover {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(28, 28, 28, 0.85);
+  color: #197bce;
+  font-weight: bold;
+  font-size: 1.3rem;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.dropzonejs-layout-hover:hover {
+  visibility: visible;
+}
+
+.dropzonejs-template {
+  display: none;
+}
+
+.files-list th,
+.files-list td {
+  vertical-align: middle !important;
+}
+
+.files-list tr:hover {
+  background-color: rgba(255, 255, 255, 0.075);
+}
+
+.files-list tr.active {
+  background-color: rgba(255, 255, 255, 0.075);
+}
+
+#checkbox-select-all {
+  width: 11px;
+}
+
+#breadcrumb .breadcrumb {
+  background-color: #262626;
+  border-radius: 0;
+}
+
