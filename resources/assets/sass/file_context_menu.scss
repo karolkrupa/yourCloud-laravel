@@ -1,0 +1,31 @@
+#file-context-menu {
+  position: absolute;
+  z-index: 1000;
+  display: none;
+
+  .list-group {
+    border-radius: 0;
+    border: 1px solid $primary-color;
+    font-size: .9rem;
+
+    button {
+      border-radius: 0;
+      padding: .5rem;
+      padding-left: .8rem;
+      padding-right: .9rem;
+
+      svg {
+        margin-right: .4rem;
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      &:hover {
+        background-color: $text-color-alt;
+        color: white;
+      }
+    }
+  }
+}

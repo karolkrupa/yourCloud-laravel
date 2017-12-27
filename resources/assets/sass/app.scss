@@ -38,6 +38,10 @@ html {
   background-color: $background-color;
 }
 
+@import "alerts-container";
+
 @import "_navbar";
 
 @import "_left_menu";
+
+@import "file_context_menu";

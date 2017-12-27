@@ -5,6 +5,10 @@
 @endsection
 
 @section('content-base')
+<div id="alerts-container">
+    @yield('alerts-container')
+</div>
+
 
 <div class="container-fluid" id="container">
     <div class="row">

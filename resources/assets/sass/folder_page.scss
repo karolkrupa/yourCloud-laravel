@@ -8,13 +8,25 @@
     vertical-align: middle !important;
   }
 
-  tr:hover {
-    background-color: rgba(255, 255, 255, 0.075);
+  tbody {
+    tr {
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.075);
+      }
+
+      &.active, &.active-static {
+        background-color: $text-color-alt;
+        color: lighten($text-color, 10);
+
+        &:hover {
+          background-color: lighten($text-color-alt, 4) !important;
+          color: lighten($text-color, 15);
+        }
+      }
+    }
   }
 
-  tr.active {
-    background-color: rgba(255, 255, 255, 0.075);
-  }
 }
 
 #checkbox-select-all {

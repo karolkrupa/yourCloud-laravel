@@ -20,7 +20,7 @@ window.dropzonejs_config = {
 
         console.error('Dropzonejs upload error. Server response: ' + JSON.stringify(msg));
     },
-    success: function(file, msg) {
+    success: function(file, data) {
         $(file.previewElement).find('.progress-bar').addClass('bg-success');
 
         setTimeout(function (file) {
@@ -29,28 +29,9 @@ window.dropzonejs_config = {
             });
         }, 3000, file);
 
-        var element = $('#file-list tbody tr.yc-template').clone();
+        file = File_list.addFileToList(data).addClass('active');
 
-        element.find('.file-name').html(msg['name']);
-        element.find('.file-size').html(msg['size_normalized']);
-        element.find('.file-updated-at').html(msg['updated_at']);
-
-        element.attr('data-file-id', msg['id']);
-        element.attr('data-parent-id', msg['parent_id']);
-        element.attr('data-file-type', msg['type']);
-        element.attr('data-file-name', msg['name']);
-        element.attr('data-file-size', msg['size']);
-        element.attr('data-file-updated-at', msg['updated_at']);
-
-        element.appendTo('#file-list tbody');
-
-        element.removeClass('yc-template');
-
-        if(msg['type'] == '1') {
-            element.find('[data-fa-processed]').addClass('fa-file');
-        }else {
-            element.find('[data-fa-processed]').addClass('fa-folder');
-        }
+        YourCloud.srollTo(file);
     },
     sending: function(file, xhr) {
         $('#dropzonejs-container .dz-complete').remove();
@@ -62,8 +43,8 @@ window.dropzonejs_config = {
         $(file.previewElement).find('.progress-bar').attr('aria-valuenow', progress);
         $(file.previewElement).find('.progress-bar').html(progress + '%');
     },
-}
+};
 
 window.enable_dropzonejs = function(container = '#content') {
     $(container).dropzone(dropzonejs_config);
-}
+};

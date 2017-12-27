@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class File extends Model
 {
@@ -79,12 +80,51 @@ class File extends Model
 
         $fileAttr['users_id'] = $user->id;
 
-
         // Folder type
         $fileAttr['type'] = 0;
 
         $fileAttr['name'] = self::_getNameIfIsset($fileAttr);
 
         return File::create($fileAttr);
+    }
+
+    public function sendFile() {
+        $response = response(Storage::get($this->path));
+
+        $response->withHeaders([
+            'Content-Type' => 'application/force-download',
+            'Content-Disposition' => 'attachment; filename="'. $this->name .'";',
+            'Content-Length' => Storage::size($this->path),
+            'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
+            'Last-Modified' => Storage::lastModified($this->path),
+            'Cache-Control' => 'no-store, no-cache, must-revalidate',
+            'Pragma' => 'no-cache'
+        ]);
+
+        return $response;
+    }
+
+    public function isFolder() {
+        return $this->type == 0;
+    }
+
+    public function isFile() {
+        return $this->type == 1;
+    }
+
+    public function getFolders() {
+        return File::where('parent_id', $this->id)
+            ->where('type', 0)
+            ->get();
+    }
+
+    public function getFiles() {
+        return File::where('parent_id', $this->id)
+            ->where('type', 1)
+            ->get();
+    }
+
+    public function getAbsolutePath() {
+        return storage_path('app'). DIRECTORY_SEPARATOR . $this->path;
     }
 }

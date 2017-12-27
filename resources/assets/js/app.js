@@ -6,11 +6,16 @@
  */
 
 
-require('./bootstrap');
+// require('./bootstrap');
 
-require('./fontawesome-all');
+$.ajaxSetup({
+    headers:
+        { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+});
 
 require('./dropzone');
+
+require('./yourCloud');
 
 require('./dropzone_config');
 
@@ -18,8 +23,9 @@ require('./File_list');
 
 require('./file_event');
 
-// require('datatables.net');
-// require('datatables.net-bs4');
+require('./file_context_menu');
+
+
 
 
 

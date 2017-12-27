@@ -7,11 +7,15 @@
 
 @endsection
 
+@section('alerts-container')
+
+@endsection
+
 @section('left-menu')
-    <a href="" class="btn"><i class="fas fa-star"></i>Oznaczone</a>
-    <a href="" class="btn"><i class="fas fa-align-justify"></i>Kategorie</a>
-    <a href="" class="btn"><i class="fas fa-share-alt-square"></i>Udostępnione dla mnie</a>
-    <a href="" class="btn"><i class="fas fa-share-alt-square"></i>Udostępnione przeze mnie</a>
+    <a href="" class="btn"><i class="fas fa-star"></i>Favorites</a>
+    <a href="" class="btn"><i class="fas fa-align-justify"></i>Categories</a>
+    <a href="" class="btn"><i class="fas fa-share-alt-square"></i>Shared for me</a>
+    <a href="" class="btn"><i class="fas fa-share-alt-square"></i>Shared by me</a>
 @endsection
 
 @section('navbar-right')
@@ -33,8 +37,6 @@
             </div>
         </div>
     </div>
-
-
 
 @endsection
 
@@ -62,8 +64,17 @@
         <div class="col-12 p-0">
             <nav aria-label="breadcrumb" role="navigation" id="breadcrumb">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Library</li>
+                    @foreach($path as $folder)
+                        <?php $path_url .= '/' . $folder; ?>
+
+                        @if ($loop->last)
+                                <li class="breadcrumb-item active">{{ urldecode($folder) }}</li>
+                        @else
+                                <li class="breadcrumb-item"><a href="#"><a href="{{ URL::to($path_url) }}">{{ urldecode($folder) }}</a></a></li>
+                        @endif
+                    @endforeach
+                    {{--<li class="breadcrumb-item"><a href="#">Home</a></li>--}}
+                    {{--<li class="breadcrumb-item active" aria-current="page">Library</li>--}}
                 </ol>
             </nav>
         </div>
@@ -97,8 +108,46 @@
                 <td class="file-size">size</td>
                 <td class="file-updated-at">date</td>
             </tr>
+            {{--<tr class=""--}}
+                {{--data-file-id="id"--}}
+                {{--data-file-parent-id="id"--}}
+                {{--data-file-type="1/2"--}}
+                {{--data-file-name="name"--}}
+                {{--data-file-size="size"--}}
+                {{--data-file-updated-at="date"--}}
+            {{-->--}}
+                {{--<!-- fa-folder/fa-file -->--}}
+                {{--<td><i class="fas" style="font-size: 25px"></i></td>--}}
+                {{--<td class="file-name">--}}
+                    {{--<div class="input-group">--}}
+                                               {{--<input type="text" class="form-control" placeholder="name">--}}
+                        {{--<span class="input-group-btn">--}}
+                         {{--<button class="btn btn-secondary" type="button" data-action="cancel">--}}
+                             {{--<i class="fas fa-times"></i>--}}
+                                {{--</button>--}}
+                              {{--<button class="btn btn-secondary" type="button" data-action="save">--}}
+                                   {{--<i class="fas fa-check"></i>--}}
+                               {{--</button>--}}
+                           {{--</span>--}}
+                                            {{--</div>--}}
+                {{--</td>--}}
+                {{--<td class="file-size">size</td>--}}
+                {{--<td class="file-updated-at">date</td>--}}
+            {{--</tr>--}}
             </tbody>
         </table>
+    </div>
+
+    <div id="file-context-menu">
+        <div class="list-group">
+            <button data-action="newFolder" type="button" class="list-group-item list-group-item-action"><i class="fas fa-folder"></i>New Folder</button>
+            <button data-action="newFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-file-alt"></i>New File</button>
+            <button data-action="copy" type="button" class="list-group-item list-group-item-action"><i class="fas fa-copy"></i>Copy</button>
+            <button data-action="copy" type="button" class="list-group-item list-group-item-action"><i class="fas fa-paste"></i>Paste</button>
+            <button data-action="rename" type="button" class="list-group-item list-group-item-action"><i class="fas fa-pencil-alt"></i>Rename</button>
+            <button data-action="rename" type="button" class="list-group-item list-group-item-action"><i class="fas fa-trash-alt"></i>Delete</button>
+            <button data-action="downloadFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-download"></i>Download</button>
+        </div>
     </div>
 
     {{--<div id="dropzone-template" >--}}
@@ -120,6 +169,8 @@
 
     <script>
         enable_dropzonejs();
+
+        // $('.alert').alert('close');
 
         // $('#file-list').dataTable({
         //     paging: false,
