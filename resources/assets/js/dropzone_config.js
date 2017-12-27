@@ -29,7 +29,7 @@ window.dropzonejs_config = {
             });
         }, 3000, file);
 
-        file = File_list.addFileToList(data).addClass('active');
+        file = FileList.addFileToList(data).addClass('active');
 
         YourCloud.srollTo(file);
     },

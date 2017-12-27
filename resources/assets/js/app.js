@@ -21,7 +21,8 @@ require('./dropzone_config');
 
 require('./File_list');
 
-require('./file_event');
+// require('./file_event');
+require('./FileList-events');
 
 require('./file_context_menu');
 

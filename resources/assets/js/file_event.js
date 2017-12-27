@@ -26,4 +26,4 @@ var file_event = {
 
 }
 
-$('#file-list').click(file_event.on_click);
+// $('#file-list').click(file_event.on_click);

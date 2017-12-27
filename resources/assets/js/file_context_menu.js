@@ -48,21 +48,21 @@ let context_menu = {
 
     downloadFile: function (contextMenuBtn) {
         var fileId = $('#file-context-menu').data('file-id');
-        File_list.downloadFile(fileId)
+        FileList.downloadFile(fileId)
     },
 
     newFile: function(contextMenuBtn) {
-        File_list.createFile();
+        FileList.createFile();
     },
 
     newFolder: function(contextMenuBtn) {
-        File_list.createFolder();
+        FileList.createFolder();
     },
 
     rename: function (contextMenuBtn) {
         var fileId = $('#file-context-menu').data('file-id');
 
-        File_list.renameFile(fileId);
+        FileList.renameFile(fileId);
     },
 };
 

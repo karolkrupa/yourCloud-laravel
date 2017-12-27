@@ -1,6 +1,6 @@
 'use strict';
 
-var File_list = {
+var FileList = {
     fileInputNameTemplate: '<div class="input-group">\n' +
     '                        <input type="text" class="form-control" placeholder="name">\n' +
     '                        <span class="input-group-btn">\n' +
@@ -34,13 +34,13 @@ var File_list = {
 
     lastSort: null,
 
-    sort_toggle: function() {
+    sortToggle: function() {
         this.sort(this.lastSort*-1);
     },
 
     renameFile: function (fileIdOrFile) {
         var file;
-        var inputFileName = $(File_list.fileInputNameTemplate);
+        var inputFileName = $(FileList.fileInputNameTemplate);
 
         if(typeof fileIdOrFile === 'object') {
             file = fileIdOrFile;
@@ -74,7 +74,7 @@ var File_list = {
 
             $.post(window.location.href, {rename_file: newName, file_id: fileId}).done(function (data) {
                 file.remove();
-                file = File_list.addFileToList(data).addClass('active');
+                file = FileList.addFileToList(data).addClass('active');
 
                 YourCloud.srollTo(file);
 
@@ -116,24 +116,24 @@ var File_list = {
             newFile.find('[data-fa-processed]').addClass(folderIcon);
         }
 
-        File_list.sort();
+        FileList.sort();
 
         return newFile;
     },
     
     createFile: function () {
         $.post(window.location.href, {new_file: "New File", file_content: ''}).done(function (data) {
-            var fileId = File_list.addFileToList(data).attr('data-file-id');
+            var fileId = FileList.addFileToList(data).attr('data-file-id');
 
-            File_list.renameFile(fileId);
+            FileList.renameFile(fileId);
         })
     },
     
     createFolder: function () {
         $.post(window.location.href, {new_folder: "New Folder"}).done(function (data) {
-            var fileId = File_list.addFileToList(data).attr('data-file-id');
+            var fileId = FileList.addFileToList(data).attr('data-file-id');
 
-            File_list.renameFile(fileId);
+            FileList.renameFile(fileId);
         })
     },
 
@@ -160,14 +160,24 @@ var File_list = {
         }
 
         window.location.href += uri;
-    }
+    },
+
+    selectAllCheckbox: {
+        check: function () {
+            $('#checkbox-select-all input').prop('checked', true);
+        },
+
+        uncheck: function () {
+            $('#checkbox-select-all input').prop('checked', false);
+        }
+    },
 };
 
-$("#file-list tbody").click(File_list.renameFileExec);
+$("#file-list tbody").click(FileList.renameFileExec);
 
-window.File_list = File_list;
+window.FileList = FileList;
 
-File_list.sort();
+FileList.sort();
 
 
 
