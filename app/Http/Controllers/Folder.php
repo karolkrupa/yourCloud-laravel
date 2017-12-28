@@ -20,8 +20,13 @@ class Folder extends Controller
     private $folderPath;
 
     public function route(Request $request, $userName, $path = "") {
-        $this->folderId = $this->_getFolderId($request);
-        $this->folderPath = $this->_getFolderPath($request);
+//        return $this->_getFolderId($request);
+//        $this->folderId = $this->_getFolderId($request);
+        $this->_getFolderPath($request);
+
+        if($this->folderId === NULL) {
+            abort(404);
+        }
 
         if($request->isMethod('post')) {
             // POST Method
@@ -131,17 +136,25 @@ class Folder extends Controller
     public function createFolder(Request $request, $folderName) {
         $folder = [
             'parent_id' => $this->folderId,
-            'path' => $this->folderPath . '/' . $folderName,
+//            'path' => $this->folderPath . '/' . $folderName,
             'name' => $folderName,
             'mime_type' => 'folder',
             'size' => 0,
         ];
 
-        $folder = File::addFolder($folder, Auth::user())->toArray();
+//        $folder = File::addFolder($folder, Auth::user())->toArray();
+        $folder = File::addFolder($folder, Auth::user());
+        $folderPath = $this->folderPath . DIRECTORY_SEPARATOR . $folder->id;
 
-        $folder['size_normalized'] = UnitConverter::bytesToHuman($folder['size']);
+        if($folder->update(['path' => $folderPath])) {
+            $folder = $folder->toArray();
 
-        return Response()->json($folder, 201);
+            $folder['size_normalized'] = UnitConverter::bytesToHuman($folder['size']);
+
+            return Response()->json($folder, 201);
+        }else {
+            return Response()->json(['msg' => "Can't create folder"], 404);
+        }
     }
 
     public function createFile(Request $request, $fileName, $fileContent) {
@@ -249,7 +262,65 @@ class Folder extends Controller
     }
 
     private function _getFolderPath(Request $request) {
-        return Auth::user()->id . substr($request->path(), strpos($request->path().DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR));
+        if($request->path()) {
+            $path = urldecode($request->path());
+
+            if($path == Auth::user()->name) {
+                return Auth::user()->id;
+            }
+
+            $path = explode('/', $path);
+            $path = array_reverse($path);
+
+            foreach ($path as $folderName) {
+                $folder = Auth::user()->files()->where('name', $folderName)->get();
+
+                if(count($folder) > 1) {
+                    $reverseArrray[] = $folderName;
+                }else if(count($folder) < 1) {
+                    if($folderName == Auth::user()->name) {
+                        $lastFolderId = 0;
+                        $path = Auth::user()->id;
+                        break;
+                    }else {
+                        abort(404);
+                    }
+                }else {
+                    $path = $folder->first()->path;
+                    $lastFolderId = $folder->first()->id;
+                    break;
+                }
+            }
+
+            if(isset($reverseArrray)) {
+                $reverseArrray = array_reverse($reverseArrray);
+
+                foreach ($reverseArrray as $folderName) {
+                    $folder = Auth::user()->files()
+                        ->where('name', $folderName)
+                        ->where('parent_id', $lastFolderId)
+                        ->first();
+
+                    if($folder == null) {
+                        abort(404);
+                    }
+
+                    $lastFolderId = $folder->id;
+                    $path .= DIRECTORY_SEPARATOR . $folder->id;
+                }
+            }
+
+            $this->folderPath = $path;
+            $this->folderId = $lastFolderId;
+
+            return $path;
+        }else {
+            abort(404);
+        }
+//
+//
+//        $path = Auth::user()->id . substr($request->path(), strpos($request->path().DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR));
+//        return urldecode($path);
     }
 
     private function _getFolderId(Request $request) {

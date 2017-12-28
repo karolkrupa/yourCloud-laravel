@@ -19,7 +19,7 @@ class CreateFilesTable extends Migration
             $table->integer('users_id')->unsigned();
             $table->boolean('type');
             $table->string('name', 255);
-            $table->string('path', 255);
+            $table->string('path', 255)->nullable()->unique();
             $table->string('mime_type', 255);
             $table->integer('size');
             $table->timestamps();
