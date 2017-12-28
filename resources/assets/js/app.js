@@ -19,7 +19,7 @@ require('./yourCloud');
 
 require('./dropzone_config');
 
-require('./File_list');
+require('./FileList');
 
 // require('./file_event');
 require('./FileList-events');

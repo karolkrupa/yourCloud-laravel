@@ -127,4 +127,22 @@ class File extends Model
     public function getAbsolutePath() {
         return storage_path('app'). DIRECTORY_SEPARATOR . $this->path;
     }
+
+    public function delete() {
+        if($this->isFolder()) {
+            $files = File::where('parent_id', $this->id)
+                ->where('users_id', $this->users_id)
+                ->orderBy('type', 'DESC')
+                ->get();
+
+            foreach ($files as $file) {
+                $file->delete();
+            }
+            Storage::deleteDirectory($this->path);
+        }else {
+            Storage::delete($this->path);
+        }
+
+        return parent::delete();
+    }
 }

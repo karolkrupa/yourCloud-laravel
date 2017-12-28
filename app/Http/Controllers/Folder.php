@@ -20,11 +20,9 @@ class Folder extends Controller
     private $folderPath;
 
     public function route(Request $request, $userName, $path = "") {
-//        return $this->_getFolderId($request);
-//        $this->folderId = $this->_getFolderId($request);
         $this->_getFolderPath($request);
 
-        if($this->folderId === NULL) {
+        if($this->folderPath === NULL) {
             abort(404);
         }
 
@@ -53,6 +51,13 @@ class Folder extends Controller
                     $request->post('file_id')
                 );
 
+            }else if($request->has('delete_file')) {
+
+                return $this->deleteFile(
+                    $request,
+                    $request->post('delete_file')
+                );
+
             }else {
 
                 return $this->storeFile(
@@ -62,6 +67,8 @@ class Folder extends Controller
                 );
 
             }
+
+
         }else if($request->isMethod('get')) {
             // GET Method
 
@@ -153,7 +160,10 @@ class Folder extends Controller
 
             return Response()->json($folder, 201);
         }else {
-            return Response()->json(['msg' => "Can't create folder"], 404);
+            return Response()->json([
+                'error' => "Can't create folder",
+                'code' => '404'
+            ], 404);
         }
     }
 
@@ -212,6 +222,28 @@ class Folder extends Controller
         }
     }
 
+    public function deleteFile(Request $request, $fileId) {
+        $file = Auth::user()->files()->find($fileId);
+
+        if(! $file) {
+            return Response()->json([
+                'error' => 'This file does not exist',
+                'code' => '404'
+            ], 404);
+        }
+
+        if($file->delete()) {
+            return Response()->json([
+                'success'=> true
+            ]);
+        }else {
+            return Response()->json([
+                'error' => "Can not delete this file",
+                'code' => '404'
+            ], 404);
+        }
+    }
+
     public function get($file_id) {
 
     }
@@ -266,7 +298,10 @@ class Folder extends Controller
             $path = urldecode($request->path());
 
             if($path == Auth::user()->name) {
-                return Auth::user()->id;
+                $this->folderPath = Auth::user()->id;
+                $this->folderId = 0;
+
+                return $this->folderPath;
             }
 
             $path = explode('/', $path);

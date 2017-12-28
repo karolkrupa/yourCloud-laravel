@@ -142,10 +142,10 @@
         <div class="list-group">
             <button data-action="newFolder" type="button" class="list-group-item list-group-item-action"><i class="fas fa-folder"></i>New Folder</button>
             <button data-action="newFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-file-alt"></i>New File</button>
-            <button data-action="copy" type="button" class="list-group-item list-group-item-action"><i class="fas fa-copy"></i>Copy</button>
-            <button data-action="copy" type="button" class="list-group-item list-group-item-action"><i class="fas fa-paste"></i>Paste</button>
+            {{--<button data-action="copy" type="button" class="list-group-item list-group-item-action"><i class="fas fa-copy"></i>Copy</button>--}}
+            {{--<button data-action="copy" type="button" class="list-group-item list-group-item-action"><i class="fas fa-paste"></i>Paste</button>--}}
             <button data-action="rename" type="button" class="list-group-item list-group-item-action"><i class="fas fa-pencil-alt"></i>Rename</button>
-            <button data-action="rename" type="button" class="list-group-item list-group-item-action"><i class="fas fa-trash-alt"></i>Delete</button>
+            <button data-action="deleteFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-trash-alt"></i>Delete</button>
             <button data-action="downloadFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-download"></i>Download</button>
         </div>
     </div>

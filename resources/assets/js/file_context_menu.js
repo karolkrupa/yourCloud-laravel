@@ -51,6 +51,11 @@ let context_menu = {
         FileList.downloadFile(fileId)
     },
 
+    deleteFile: function (contextMenuBtn) {
+        var fileId = $('#file-context-menu').data('file-id');
+        FileList.deleteFile(fileId);
+    },
+
     newFile: function(contextMenuBtn) {
         FileList.createFile();
     },

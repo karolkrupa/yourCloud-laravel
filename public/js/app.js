@@ -3912,6 +3912,25 @@ var FileList = {
         window.location.href += uri;
     },
 
+    deleteFile: function deleteFile(fileIdOrFile) {
+        var fileId;
+        var file;
+
+        if ((typeof fileIdOrFile === 'undefined' ? 'undefined' : _typeof(fileIdOrFile)) === 'object') {
+            fileId = $(fileIdOrFile).attr('data-file-id');
+            file = fileIdOrFile;
+        } else {
+            fileId = fileIdOrFile;
+            file = $('#file-list tbody tr[data-file-id="' + fileId + '"]');
+        }
+
+        $.post(window.location.href, { delete_file: fileId }).done(function (data) {
+            file.remove();
+        }).fail(function (data) {
+            YourCloud.addAlert(data.responseJSON.error, 'warning');
+        });
+    },
+
     selectAllCheckbox: {
         check: function check() {
             $('#checkbox-select-all input').prop('checked', true);
@@ -4086,6 +4105,11 @@ var context_menu = {
     downloadFile: function downloadFile(contextMenuBtn) {
         var fileId = $('#file-context-menu').data('file-id');
         FileList.downloadFile(fileId);
+    },
+
+    deleteFile: function deleteFile(contextMenuBtn) {
+        var fileId = $('#file-context-menu').data('file-id');
+        FileList.deleteFile(fileId);
     },
 
     newFile: function newFile(contextMenuBtn) {

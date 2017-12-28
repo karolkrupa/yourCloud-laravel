@@ -162,6 +162,25 @@ var FileList = {
         window.location.href += uri;
     },
 
+    deleteFile: function (fileIdOrFile) {
+        var fileId;
+        var file;
+
+        if(typeof  fileIdOrFile === 'object') {
+            fileId = $(fileIdOrFile).attr('data-file-id');
+            file = fileIdOrFile;
+        }else {
+            fileId = fileIdOrFile;
+            file = $('#file-list tbody tr[data-file-id="'+ fileId +'"]')
+        }
+
+        $.post(window.location.href, {delete_file: fileId}).done(function (data) {
+            file.remove();
+        }).fail(function (data) {
+            YourCloud.addAlert(data.responseJSON.error, 'warning');
+        });
+    },
+
     selectAllCheckbox: {
         check: function () {
             $('#checkbox-select-all input').prop('checked', true);
