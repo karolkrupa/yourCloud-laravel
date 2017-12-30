@@ -23,6 +23,10 @@
         &:hover, &.active {
           color: $text-color-alt;
         }
+
+        &.active:hover {
+          color: $text-color;
+        }
       }
 
       &:hover {
@@ -32,6 +36,20 @@
       &.active, &.active-static {
         background-color: $text-color-alt;
         color: lighten($text-color, 10);
+
+        td.favorite-btn {
+          &.active {
+            color: darken($text-color-alt, 15);
+
+            &:hover {
+              color: $text-color;
+            }
+          }
+
+          &:hover {
+            color: darken($text-color-alt, 15);
+          }
+        }
 
         &:hover {
           background-color: lighten($text-color-alt, 4) !important;

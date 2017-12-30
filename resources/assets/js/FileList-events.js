@@ -32,14 +32,30 @@ FileListEvents = {
     },
 
     onFavoriteBtnClick: function (event) {
+        event.stopPropagation();
+
         let file = $(this).parents('tr');
         let fileId = file.data('file-id');
 
-        $.post(window.location.href, {add_favorite_file: fileId}).done(function (data) {
-            file.find('.favorite-btn').addClass('active');
-        }).fail(function (data) {
-            YourCloud.addAlert(data.responseJSON.error, 'warning');
-        });
+        if(! file.find('.favorite-btn').hasClass('active')) { // Add to favorites
+            $.post(window.location.href, {add_favorite_file: fileId}).done(function (data) {
+                file.find('.favorite-btn').addClass('active');
+            }).fail(function (data) {
+                YourCloud.addAlert(data.responseJSON.error, 'warning');
+            });
+        }else { // Remove to favorites
+            $.post(window.location.href, {remove_favorite_file: fileId}).done(function (data) {
+                file.find('.favorite-btn').removeClass('active');
+
+                if($('#left-menu [data-overlap="favorites"]').hasClass('active')) {
+                    file.remove();
+                }
+            }).fail(function (data) {
+                YourCloud.addAlert(data.responseJSON.error, 'warning');
+            });
+        }
+
+
     }
 };
 

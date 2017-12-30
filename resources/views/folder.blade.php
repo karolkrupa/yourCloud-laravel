@@ -12,11 +12,11 @@
 @endsection
 
 @section('left-menu')
-    <a href="/" class="btn {{ ($overlap == 'main')? 'active' : '' }}"><i class="far fa-folder"></i>{{ Auth::user()->name }}</a>
-    <a href="{{ URL::to(Auth::user()->name) . '?overlap=favorites' }}" class="btn {{ ($overlap == 'favorites')? 'active' : '' }}"><i class="fas fa-star"></i>Favorites</a>
-    <a href="" class="btn"><i class="fas fa-align-justify"></i>Categories</a>
-    <a href="" class="btn"><i class="fas fa-share-alt-square"></i>Shared for me</a>
-    <a href="" class="btn"><i class="fas fa-share-alt-square"></i>Shared by me</a>
+    <a data-overlap="main" href="/" class="btn {{ ($overlap == 'main')? 'active' : '' }}"><i class="far fa-folder"></i>{{ Auth::user()->name }}</a>
+    <a data-overlap="favorites" href="{{ URL::to(Auth::user()->name) . '?overlap=favorites' }}" class="btn {{ ($overlap == 'favorites')? 'active' : '' }}"><i class="fas fa-star"></i>Favorites</a>
+    <a data-overlap="categories" href="" class="btn"><i class="fas fa-align-justify"></i>Categories</a>
+    <a data-overlap="shared_for_me" href="" class="btn"><i class="fas fa-share-alt-square"></i>Shared for me</a>
+    <a data-overlap="shared_by_me" href="" class="btn"><i class="fas fa-share-alt-square"></i>Shared by me</a>
 @endsection
 
 @section('navbar-right')

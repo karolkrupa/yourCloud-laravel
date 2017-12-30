@@ -60,12 +60,19 @@ class Folder extends Controller
 
             }else if($request->has('add_favorite_file')) {
 
-            return $this->addFavoriteFile(
-                $request,
-                $request->post('add_favorite_file')
-            );
+                return $this->addFavoriteFile(
+                    $request,
+                    $request->post('add_favorite_file')
+                );
 
-        }else {
+            }else if($request->has('remove_favorite_file')) {
+
+                return $this->removeFavoriteFile(
+                    $request,
+                    $request->post('remove_favorite_file')
+                );
+
+            }else {
 
                 return $this->storeFile(
                     $request,
@@ -406,12 +413,31 @@ class Folder extends Controller
     public function addFavoriteFile(Request $request, $id) {
         $file = Auth::user()->files()->find($id);
 
-        if($file->addToFavorites()) {
+        if($file && $file->addToFavorites()) {
             return Response()->json(
                 [
                     'success' => true
                 ],
             201);
+        }else {
+            return Response()->json(
+                [
+                    'error' => 'File not found',
+                    'code' => 404
+                ],
+                404);
+        }
+    }
+
+    public function removeFavoriteFile(Request $request, $id) {
+        $file = Auth::user()->files()->find($id);
+
+        if($file && $file->removeFromFavorites()) {
+            return Response()->json(
+                [
+                    'success' => true
+                ],
+                201);
         }else {
             return Response()->json(
                 [
