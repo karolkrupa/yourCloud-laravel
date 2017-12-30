@@ -204,7 +204,6 @@ class ResourceController extends Controller
     public function deleteFile(Request $request, $fileId) {
         $file = Auth::user()->files()->find($fileId);
 
-//        return $file;
 
         if(! $file) {
             return Response()->json([

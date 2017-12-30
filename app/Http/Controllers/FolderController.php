@@ -26,6 +26,7 @@ class FolderController extends Controller
     }
 
     public function route(Request $request, $userName, $path = "") {
+
         return $this->index($request, $userName, $path);
     }
 
@@ -42,21 +43,15 @@ class FolderController extends Controller
             ]);
         }
 
+        $files = Auth::user()->files()
+            ->where('parent_id', $this->folderId);
+
+        // Select only favorites files
         if(session('overlap', 'main') == 'favorites') {
-            $files = Auth::user()
-                ->files()
-                ->where('favorite', true)
-                ->where('parent_id', $this->folderId)
-                ->get()
-                ->toArray();
-        }else {
-            $files = Auth::user()
-                ->files()
-                ->where('parent_id', $this->folderId)
-                ->get()
-                ->toArray();
+            $files = $files->where('favorite', true);
         }
 
+        $files = $files->get()->toArray();
 
         return view('folder',
             [
@@ -66,7 +61,5 @@ class FolderController extends Controller
                 'path_url' => URL::to('/')
             ]);
     }
-
-
 
 }
