@@ -9785,6 +9785,10 @@ html {
   color: #A8A8A8;
 }
 
+#left-menu .btn.active {
+  color: #197bce !important;
+}
+
 #left-menu .btn:focus,
 #left-menu .btn:active {
   outline: none;
@@ -9794,7 +9798,6 @@ html {
 
 #left-menu .btn > svg {
   margin-right: .6rem;
-  color: #8f8e8e;
 }
 
 #file-context-menu {

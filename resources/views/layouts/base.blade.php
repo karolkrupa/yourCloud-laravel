@@ -20,6 +20,10 @@
 
     @yield('custom-head')
 
+    <script>
+        FontAwesomeConfig = { searchPseudoElements: true };
+    </script>
+
 </head>
 <body>
 

@@ -3846,6 +3846,11 @@ var FileList = {
 
         newFile.find('.file-size').html(file['size_normalized']);
         newFile.find('.file-updated-at').html(file['updated_at']);
+        newFile.find('.favorite-btn').addClass('active');
+
+        // Not work
+        // newFile.find('.favorite-btn [data-fa-processed]').attr('data-prefix', 'fas');
+        // newFile.find('.favorite-btn [data-fa-processed]').data('prefix', 'fas');
 
         newFile.attr('data-file-id', file['id']);
         newFile.attr('data-parent-id', file['parent_id']);
@@ -3859,9 +3864,9 @@ var FileList = {
         newFile.removeClass(fileTemplateClass);
 
         if (file['type'] == '1') {
-            newFile.find('[data-fa-processed]').addClass(fileIcon);
+            newFile.find('.file-icon [data-fa-processed]').addClass(fileIcon);
         } else {
-            newFile.find('[data-fa-processed]').addClass(folderIcon);
+            newFile.find('.file-icon [data-fa-processed]').addClass(folderIcon);
         }
 
         FileList.sort();
@@ -4024,11 +4029,27 @@ FileListEvents = {
                 // window.location.replace(download_link);
             } else {
                 // Folder
-                window.location.href += '/' + el.data('file-name');
+                // Remove get parameters
+                var link = window.location.href;
+                // let getParameters = link.substr(link.indexOf('?'));
+                link = link.substr(0, link.indexOf('?'));
+
+                window.location.href = link + '/' + el.data('file-name');
             }
         } else {
             el.data('click-time', new Date().getTime());
         }
+    },
+
+    onFavoriteBtnClick: function onFavoriteBtnClick(event) {
+        var file = $(this).parents('tr');
+        var fileId = file.data('file-id');
+
+        $.post(window.location.href, { add_favorite_file: fileId }).done(function (data) {
+            file.find('.favorite-btn').addClass('active');
+        }).fail(function (data) {
+            YourCloud.addAlert(data.responseJSON.error, 'warning');
+        });
     }
 };
 
@@ -4045,6 +4066,8 @@ FileList.selectAllCheckbox.onClick = function () {
 FileList.events = FileListEvents;
 
 $('#file-list tbody').click(FileList.events.onFileClick);
+
+$('#file-list tbody .favorite-btn').click(FileList.events.onFavoriteBtnClick);
 
 $('#checkbox-select-all input').click(FileList.selectAllCheckbox.onClick);
 

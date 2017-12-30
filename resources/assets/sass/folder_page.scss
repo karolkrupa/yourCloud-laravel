@@ -11,6 +11,20 @@
   tbody {
     tr {
       cursor: pointer;
+
+      td.favorite-btn {
+
+        &:before {
+          display: none;
+          font-family: "Font Awesome 5 Regular";
+          content: "\f005";
+        }
+
+        &:hover, &.active {
+          color: $text-color-alt;
+        }
+      }
+
       &:hover {
         background-color: rgba(255, 255, 255, 0.075);
       }

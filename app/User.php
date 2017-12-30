@@ -28,6 +28,12 @@ class User extends Authenticatable
     ];
 
     public function files() {
+//        $favorties = File::where('users_id', $this->id)->has('favoriteFiles');
+
         return $this->hasMany('\App\File', 'users_id', 'id');
+    }
+
+    public function favoriteFiles() {
+        return $this->belongsToMany('App\File', 'favorite_files', 'users_id', 'files_id')->withoutGlobalScope('favorite_pointer');
     }
 }

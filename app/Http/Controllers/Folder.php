@@ -58,7 +58,14 @@ class Folder extends Controller
                     $request->post('delete_file')
                 );
 
-            }else {
+            }else if($request->has('add_favorite_file')) {
+
+            return $this->addFavoriteFile(
+                $request,
+                $request->post('add_favorite_file')
+            );
+
+        }else {
 
                 return $this->storeFile(
                     $request,
@@ -91,14 +98,30 @@ class Folder extends Controller
      */
     public function index(Request $request, $userName, $path)
     {
-        $files = Auth::user()
-            ->files()
-            ->where('parent_id', $this->folderId)
-            ->get()
-            ->toArray();
+        if($this->folderId == 0) { // Main folder
+            session([
+                'overlap' => $request->get('overlap', 'main')
+            ]);
+        }
+
+        if(session('overlap', 'main') == 'favorites') {
+            $files = Auth::user()
+                ->favoriteFiles()
+                ->where('parent_id', $this->folderId)
+                ->get()
+                ->toArray();
+        }else {
+            $files = Auth::user()
+                ->files()
+                ->where('parent_id', $this->folderId)
+                ->get()
+                ->toArray();
+        }
+
 
         return view('folder',
             [
+                'overlap' => session('overlap', 'main'),
                 'files' => $files,
                 'path' => explode('/', $request->path()),
                 'path_url' => URL::to('/')
@@ -378,5 +401,24 @@ class Folder extends Controller
         $file = Auth::user()->files()->find($id);
 
         return FileSender::shareFiles($file);
+    }
+
+    public function addFavoriteFile(Request $request, $id) {
+        $file = Auth::user()->files()->find($id);
+
+        if($file->addToFavorites()) {
+            return Response()->json(
+                [
+                    'success' => true
+                ],
+            201);
+        }else {
+            return Response()->json(
+                [
+                    'error' => 'File not found',
+                    'code' => 404
+                ],
+                404);
+        }
     }
 }

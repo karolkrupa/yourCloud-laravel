@@ -2,8 +2,12 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Mockery\Exception;
 
 class File extends Model
 {
@@ -20,6 +24,19 @@ class File extends Model
     protected $hidden = [
         'path',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Adding 'favorite' column
+        static::addGlobalScope('favorite_pointer', function (Builder $builder) {
+            $builder->getQuery()->leftJoin('favorite_files', 'favorite_files.files_id', '=', 'files.id');
+
+            $exp = new Expression('`files`.*, IF(`favorite_files`.`files_id` = `files`.`id`, TRUE, FALSE) as `favorite`');
+            $builder->getQuery()->select($exp);
+        });
+    }
 
     static private function _getNameIfIsset($fileAttr) {
         $user = User::find($fileAttr['users_id']);
@@ -144,5 +161,41 @@ class File extends Model
         }
 
         return parent::delete();
+    }
+
+    public function addToFavorites(User $user = null) {
+        if(! $user) {
+            $user = Auth::user();
+        }
+
+        if(! $user->favoriteFiles()->where('files_id', $this->id)->first()) {
+            try {
+                $user->favoriteFiles()->attach($this->id);
+
+                return true;
+            }catch (Exception $e) {
+                return false;
+            }
+        }else {
+            return true;
+        }
+    }
+
+    public function removeFromFavorites(User $user = null) {
+        if(! $user) {
+            $user = Auth::user();
+        }
+
+        if($user->favoriteFiles()->where('files_id', $this->id)->first()) {
+            try {
+                $user->favoriteFiles()->detach($this->id);
+
+                return true;
+            }catch (Exception $e) {
+                return false;
+            }
+        }else {
+            return true;
+        }
     }
 }

@@ -98,6 +98,11 @@ var FileList = {
 
         newFile.find('.file-size').html(file['size_normalized']);
         newFile.find('.file-updated-at').html(file['updated_at']);
+        newFile.find('.favorite-btn').addClass('active');
+
+        // Not work
+        // newFile.find('.favorite-btn [data-fa-processed]').attr('data-prefix', 'fas');
+        // newFile.find('.favorite-btn [data-fa-processed]').data('prefix', 'fas');
 
         newFile.attr('data-file-id', file['id']);
         newFile.attr('data-parent-id', file['parent_id']);
@@ -111,9 +116,9 @@ var FileList = {
         newFile.removeClass(fileTemplateClass);
 
         if(file['type'] == '1') {
-            newFile.find('[data-fa-processed]').addClass(fileIcon);
+            newFile.find('.file-icon [data-fa-processed]').addClass(fileIcon);
         }else {
-            newFile.find('[data-fa-processed]').addClass(folderIcon);
+            newFile.find('.file-icon [data-fa-processed]').addClass(folderIcon);
         }
 
         FileList.sort();
