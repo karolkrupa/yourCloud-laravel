@@ -32,5 +32,5 @@ Route::get('/logout', function () {
     return "Wylogowany";
 });
 
-Route::any('{user_name}/{path?}', 'FolderController@route')->where('path', '(.*)')->middleware('auth');
+Route::any('{user_name}/{path?}', 'ResourceController@route')->where('path', '(.*)')->middleware('auth');
 //Route::post('{user_name}/{path?}', 'Folder@store')->where('path', '(.*)')->middleware('auth');

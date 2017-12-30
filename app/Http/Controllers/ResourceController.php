@@ -19,14 +19,31 @@ class ResourceController extends Controller
     private $folderId = 0;
     private $folderPath;
 
-    function __construct($folderId, $folderPath) {
-        $this->folderId = $folderId;
-        $this->folderPath = $folderPath;
-    }
 
-    function route(Request $request) {
 
-        if($request->isMethod('post')) {
+    function route(Request $request, $userName, $path = "") {
+        $this->_getFolderPath($request);
+
+        if($this->folderPath === NULL) {
+            abort(404);
+        }
+
+        if(strtolower($userName) != strtolower(Auth::user()->name)) {
+            return 'Inny user';
+        }
+
+        if($request->isMethod('GET')) {
+            // GET Method
+            if($request->has('download_file')) {
+
+                return $this->shareFile($request, $request->get('download_file'));
+            }else {
+                // FolderController
+                $folderController = new FolderController($this->folderId, $this->folderPath);
+
+                return $folderController->route($request, $userName, $path);
+            }
+        }else {
             // POST Method
             if($request->has('new_folder')) {
 
@@ -79,16 +96,10 @@ class ResourceController extends Controller
                 );
 
             }
-
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function storeFile(Request $request)
     {
         $this->folderId = $this->_getFolderId($request);
@@ -251,5 +262,72 @@ class ResourceController extends Controller
                 ],
                 404);
         }
+    }
+
+    private function _getFolderPath(Request $request) {
+        if($request->path()) {
+            $path = urldecode($request->path());
+
+            if($path == Auth::user()->name) {
+                $this->folderPath = Auth::user()->id;
+                $this->folderId = 0;
+
+                return $this->folderPath;
+            }
+
+            $path = explode('/', $path);
+            $path = array_reverse($path);
+
+            foreach ($path as $folderName) {
+                $folder = Auth::user()->files()->where('name', $folderName)->get();
+
+                if(count($folder) > 1) {
+                    $reverseArrray[] = $folderName;
+                }else if(count($folder) < 1) {
+                    if($folderName == Auth::user()->name) {
+                        $lastFolderId = 0;
+                        $path = Auth::user()->id;
+                        break;
+                    }else {
+                        abort(404);
+                    }
+                }else {
+                    $path = $folder->first()->path;
+                    $lastFolderId = $folder->first()->id;
+                    break;
+                }
+            }
+
+            if(isset($reverseArrray)) {
+                $reverseArrray = array_reverse($reverseArrray);
+
+                foreach ($reverseArrray as $folderName) {
+                    $folder = Auth::user()->files()
+                        ->where('name', $folderName)
+                        ->where('parent_id', $lastFolderId)
+                        ->first();
+
+                    if($folder == null) {
+                        abort(404);
+                    }
+
+                    $lastFolderId = $folder->id;
+                    $path .= DIRECTORY_SEPARATOR . $folder->id;
+                }
+            }
+
+            $this->folderPath = $path;
+            $this->folderId = $lastFolderId;
+
+            return $path;
+        }else {
+            return abort(404);
+        }
+    }
+
+    public function shareFile(Request $request, $id) {
+        $file = Auth::user()->files()->find($id);
+
+        return FileSender::shareFiles($file);
     }
 }

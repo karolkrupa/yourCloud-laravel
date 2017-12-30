@@ -19,32 +19,15 @@ class FolderController extends Controller
     private $folderId = 0;
     private $folderPath;
 
-    public function route(Request $request, $userName, $path = "") {
-        $this->_getFolderPath($request);
-
-        if($this->folderPath === NULL) {
-            abort(404);
-        }
-
-        if($request->isMethod('GET')) {
-            // GET Method
-            if(strtolower($userName) == strtolower(Auth::user()->name)) {
-                if($request->has('download_file')) {
-                    return $this->shareFile($request, $request->get('download_file'));
-                }else {
-                    return $this->index($request, $userName, $path);
-                }
-            }else {
-                return 'Inny user';
-            }
-        }else {
-            $resourceController = new ResourceController($this->folderId, $this->folderPath);
-
-            return $resourceController->route($request);
-        }
+    function __construct($folderId, $folderPath)
+    {
+        $this->folderId = $folderId;
+        $this->folderPath = $folderPath;
     }
 
-
+    public function route(Request $request, $userName, $path = "") {
+        return $this->index($request, $userName, $path);
+    }
 
     /**
      * Display a listing of the resource.
@@ -85,64 +68,5 @@ class FolderController extends Controller
     }
 
 
-    private function _getFolderPath(Request $request) {
-        if($request->path()) {
-            $path = urldecode($request->path());
 
-            if($path == Auth::user()->name) {
-                $this->folderPath = Auth::user()->id;
-                $this->folderId = 0;
-
-                return $this->folderPath;
-            }
-
-            $path = explode('/', $path);
-            $path = array_reverse($path);
-
-            foreach ($path as $folderName) {
-                $folder = Auth::user()->files()->where('name', $folderName)->get();
-
-                if(count($folder) > 1) {
-                    $reverseArrray[] = $folderName;
-                }else if(count($folder) < 1) {
-                    if($folderName == Auth::user()->name) {
-                        $lastFolderId = 0;
-                        $path = Auth::user()->id;
-                        break;
-                    }else {
-                        abort(404);
-                    }
-                }else {
-                    $path = $folder->first()->path;
-                    $lastFolderId = $folder->first()->id;
-                    break;
-                }
-            }
-
-            if(isset($reverseArrray)) {
-                $reverseArrray = array_reverse($reverseArrray);
-
-                foreach ($reverseArrray as $folderName) {
-                    $folder = Auth::user()->files()
-                        ->where('name', $folderName)
-                        ->where('parent_id', $lastFolderId)
-                        ->first();
-
-                    if($folder == null) {
-                        abort(404);
-                    }
-
-                    $lastFolderId = $folder->id;
-                    $path .= DIRECTORY_SEPARATOR . $folder->id;
-                }
-            }
-
-            $this->folderPath = $path;
-            $this->folderId = $lastFolderId;
-
-            return $path;
-        }else {
-            return abort(404);
-        }
-    }
 }
