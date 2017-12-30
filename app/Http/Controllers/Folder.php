@@ -113,7 +113,8 @@ class Folder extends Controller
 
         if(session('overlap', 'main') == 'favorites') {
             $files = Auth::user()
-                ->favoriteFiles()
+                ->files()
+                ->where('favorite', true)
                 ->where('parent_id', $this->folderId)
                 ->get()
                 ->toArray();
@@ -179,7 +180,7 @@ class Folder extends Controller
             'size' => 0,
         ];
 
-//        $folder = File::addFolder($folder, Auth::user())->toArray();
+
         $folder = File::addFolder($folder, Auth::user());
         $folderPath = $this->folderPath . DIRECTORY_SEPARATOR . $folder->id;
 
@@ -217,7 +218,7 @@ class Folder extends Controller
     }
 
     public function renameFile(Request $request, $fileName, $fileId) {
-        $file = Auth::user()->files()->where('id', $fileId)->first();
+        $file = Auth::user()->files()->find($fileId);
 
         if($file == null) {
             return Response()->json([
@@ -243,7 +244,7 @@ class Folder extends Controller
         $file = $file->save();
 
         if($file) {
-            $file = Auth::user()->files()->where('id', $fileId)->first()->toArray();
+            $file = Auth::user()->files()->find($fileId)->toArray();
             $file['size_normalized'] = UnitConverter::bytesToHuman($file['size']);
 
             return Response()->json($file, 201);
@@ -254,6 +255,8 @@ class Folder extends Controller
 
     public function deleteFile(Request $request, $fileId) {
         $file = Auth::user()->files()->find($fileId);
+
+//        return $file;
 
         if(! $file) {
             return Response()->json([
@@ -414,6 +417,7 @@ class Folder extends Controller
         $file = Auth::user()->files()->find($id);
 
         if($file && $file->addToFavorites()) {
+
             return Response()->json(
                 [
                     'success' => true

@@ -22,7 +22,7 @@ FileListEvents = {
                 // Remove get parameters
                 let link = window.location.href;
                 // let getParameters = link.substr(link.indexOf('?'));
-                link = link.substr(0, link.indexOf('?'));
+                link = link.substr(0, link.indexOf('?')<1? link.length : link.indexOf('?'));
 
                 window.location.href = link + '/' + el.data('file-name');
             }
@@ -40,6 +40,7 @@ FileListEvents = {
         if(! file.find('.favorite-btn').hasClass('active')) { // Add to favorites
             $.post(window.location.href, {add_favorite_file: fileId}).done(function (data) {
                 file.find('.favorite-btn').addClass('active');
+                file.find('.favorite-btn')
             }).fail(function (data) {
                 YourCloud.addAlert(data.responseJSON.error, 'warning');
             });

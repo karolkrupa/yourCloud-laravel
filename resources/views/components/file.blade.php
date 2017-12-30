@@ -8,7 +8,7 @@
 >
     <td><i class="fas fa-{{ ($data['type'] == 1)? 'file' : 'folder' }}" style="font-size: 25px"></i></td>
     <td class="file-name">{{ $data['name'] }}</td>
-    @if(((isset($data['favorite']) && $data['favorite'])) || isset($data['pivot']))
+    @if($data['pivot']['favorite'])
         <td class="favorite-btn active" role="button"></td>
     @else
         <td class="favorite-btn" role="button"></td>

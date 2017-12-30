@@ -25,17 +25,25 @@ class File extends Model
         'path',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
+//    protected static function boot()
+//    {
+//        parent::boot();
+//
+//        // Adding 'favorite' column
+//        static::addGlobalScope('favorite_pointer', function (Builder $builder) {
+////            $builder->getQuery()->leftJoin('favorite_files', 'favorite_files.files_id', '=', 'files.id');
+////
+////            $exp = new Expression('`files`.*, IF(`favorite_files`.`files_id` = `files`.`id`, TRUE, FALSE) as `favorite`');
+////            $builder->getQuery()->select($exp);
+//
+//            $builder->addSelect(new Expression('`users_files`.`favorite` as `favorite`'));
+//        });
+//    }
 
-        // Adding 'favorite' column
-        static::addGlobalScope('favorite_pointer', function (Builder $builder) {
-            $builder->getQuery()->leftJoin('favorite_files', 'favorite_files.files_id', '=', 'files.id');
-
-            $exp = new Expression('`files`.*, IF(`favorite_files`.`files_id` = `files`.`id`, TRUE, FALSE) as `favorite`');
-            $builder->getQuery()->select($exp);
-        });
+    public function scopePivot($query) {
+        $query->addSelect(new Expression('`users_files`.`favorite` as `favorite`'));
+        $query->addSelect(new Expression('`users_files`.`permissions` as `permissions`'));
+        return $query->addSelect(new Expression('`files`.*'));
     }
 
     static private function _getNameIfIsset($fileAttr) {
@@ -87,7 +95,8 @@ class File extends Model
 
         $fileAttr['name'] = self::_getNameIfIsset($fileAttr);
 
-        return File::create($fileAttr);
+        return $user->files()->save(new File($fileAttr));
+//        return File::create($fileAttr);
     }
 
     static public function addFolder($fileAttr, User $user = null) {
@@ -102,7 +111,8 @@ class File extends Model
 
         $fileAttr['name'] = self::_getNameIfIsset($fileAttr);
 
-        return File::create($fileAttr);
+        return $user->files()->save(new File($fileAttr));
+//        return File::create($fileAttr);
     }
 
     public function sendFile() {
@@ -168,17 +178,11 @@ class File extends Model
             $user = Auth::user();
         }
 
-        if(! $user->favoriteFiles()->where('files_id', $this->id)->first()) {
-            try {
-                $user->favoriteFiles()->attach($this->id);
-
-                return true;
-            }catch (Exception $e) {
-                return false;
-            }
-        }else {
+        if($this->pivot->favorite) {
             return true;
         }
+
+        return $user->files()->updateExistingPivot($this->id, ['favorite' => true]);
     }
 
     public function removeFromFavorites(User $user = null) {
@@ -186,16 +190,10 @@ class File extends Model
             $user = Auth::user();
         }
 
-        if($user->favoriteFiles()->where('files_id', $this->id)->first()) {
-            try {
-                $user->favoriteFiles()->detach($this->id);
-
-                return true;
-            }catch (Exception $e) {
-                return false;
-            }
-        }else {
+        if(! $this->pivot->favorite) {
             return true;
         }
+
+        return $user->files()->updateExistingPivot($this->id, ['favorite' => false]);
     }
 }

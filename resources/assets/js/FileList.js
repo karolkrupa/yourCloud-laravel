@@ -98,7 +98,11 @@ var FileList = {
 
         newFile.find('.file-size').html(file['size_normalized']);
         newFile.find('.file-updated-at').html(file['updated_at']);
-        newFile.find('.favorite-btn').addClass('active');
+
+        if(file['favorite']) {
+            newFile.find('.favorite-btn').addClass('active');
+        }
+
 
         // Not work
         // newFile.find('.favorite-btn [data-fa-processed]').attr('data-prefix', 'fas');
