@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\File;
 use App\Helpers\FileSender;
 use App\Helpers\UnitConverter;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use Chumper\Zipper\Zipper;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
-class Folder extends Controller
+class ResourceController extends Controller
 {
     private $folderId = 0;
     private $folderPath;
 
-    public function route(Request $request, $userName, $path = "") {
-        $this->_getFolderPath($request);
+    function __construct($folderId, $folderPath) {
+        $this->folderId = $folderId;
+        $this->folderPath = $folderPath;
+    }
 
-        if($this->folderPath === NULL) {
-            abort(404);
-        }
+    function route(Request $request) {
 
         if($request->isMethod('post')) {
             // POST Method
@@ -75,75 +75,12 @@ class Folder extends Controller
             }else {
 
                 return $this->storeFile(
-                    $request,
-                    $userName,
-                    $path
+                    $request
                 );
 
             }
 
-
-        }else if($request->isMethod('get')) {
-            // GET Method
-
-            if(strtolower($userName) == strtolower(Auth::user()->name)) {
-                if($request->has('download_file')) {
-                    return $this->shareFile($request, $request->get('download_file'));
-                }else {
-                    return $this->index($request, $userName, $path);
-                }
-            }else {
-                return 'Inny user';
-            }
         }
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request, $userName, $path)
-    {
-        if($this->folderId == 0) { // Main folder
-            session([
-                'overlap' => $request->get('overlap', 'main')
-            ]);
-        }
-
-        if(session('overlap', 'main') == 'favorites') {
-            $files = Auth::user()
-                ->files()
-                ->where('favorite', true)
-                ->where('parent_id', $this->folderId)
-                ->get()
-                ->toArray();
-        }else {
-            $files = Auth::user()
-                ->files()
-                ->where('parent_id', $this->folderId)
-                ->get()
-                ->toArray();
-        }
-
-
-        return view('folder',
-            [
-                'overlap' => session('overlap', 'main'),
-                'files' => $files,
-                'path' => explode('/', $request->path()),
-                'path_url' => URL::to('/')
-            ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -152,7 +89,7 @@ class Folder extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function storeFile(Request $request, $user_name, $path = '')
+    public function storeFile(Request $request)
     {
         $this->folderId = $this->_getFolderId($request);
         $this->folderPath = $this->_getFolderPath($request);
@@ -277,142 +214,6 @@ class Folder extends Controller
         }
     }
 
-    public function get($file_id) {
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    private function _getFolderPath(Request $request) {
-        if($request->path()) {
-            $path = urldecode($request->path());
-
-            if($path == Auth::user()->name) {
-                $this->folderPath = Auth::user()->id;
-                $this->folderId = 0;
-
-                return $this->folderPath;
-            }
-
-            $path = explode('/', $path);
-            $path = array_reverse($path);
-
-            foreach ($path as $folderName) {
-                $folder = Auth::user()->files()->where('name', $folderName)->get();
-
-                if(count($folder) > 1) {
-                    $reverseArrray[] = $folderName;
-                }else if(count($folder) < 1) {
-                    if($folderName == Auth::user()->name) {
-                        $lastFolderId = 0;
-                        $path = Auth::user()->id;
-                        break;
-                    }else {
-                        abort(404);
-                    }
-                }else {
-                    $path = $folder->first()->path;
-                    $lastFolderId = $folder->first()->id;
-                    break;
-                }
-            }
-
-            if(isset($reverseArrray)) {
-                $reverseArrray = array_reverse($reverseArrray);
-
-                foreach ($reverseArrray as $folderName) {
-                    $folder = Auth::user()->files()
-                        ->where('name', $folderName)
-                        ->where('parent_id', $lastFolderId)
-                        ->first();
-
-                    if($folder == null) {
-                        abort(404);
-                    }
-
-                    $lastFolderId = $folder->id;
-                    $path .= DIRECTORY_SEPARATOR . $folder->id;
-                }
-            }
-
-            $this->folderPath = $path;
-            $this->folderId = $lastFolderId;
-
-            return $path;
-        }else {
-            abort(404);
-        }
-//
-//
-//        $path = Auth::user()->id . substr($request->path(), strpos($request->path().DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR));
-//        return urldecode($path);
-    }
-
-    private function _getFolderId(Request $request) {
-        $folderPath = $this->_getFolderPath($request);
-
-        if($folderPath == (string)Auth::user()->id) {
-            return 0;
-        }else {
-            $folder = Auth::user()->files()
-                ->select('id')
-                ->where('path', $folderPath)
-                ->where('type', 0)
-                ->first();
-
-            return ($folder != NULL)? $folder->id : NULL;
-        }
-    }
-
-    public function shareFile(Request $request, $id) {
-        $file = Auth::user()->files()->find($id);
-
-        return FileSender::shareFiles($file);
-    }
-
     public function addFavoriteFile(Request $request, $id) {
         $file = Auth::user()->files()->find($id);
 
@@ -422,7 +223,7 @@ class Folder extends Controller
                 [
                     'success' => true
                 ],
-            201);
+                201);
         }else {
             return Response()->json(
                 [
