@@ -31,7 +31,7 @@ class FolderController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a folder view.
      *
      * @return \Illuminate\Http\Response
      */
@@ -49,6 +49,14 @@ class FolderController extends Controller
         // Select only favorites files
         if(session('overlap', 'main') == 'favorites') {
             $files = $files->where('favorite', true);
+        }
+
+        if(session('overlap', 'main') == 'tag') {
+            $files = $files->where('tag_id', $request->get('tag_id', '1'));
+
+            session([
+                'overlap' => $request->get('overlap', 'main') . '-' . $request->get('tag_id', '1')
+            ]);
         }
 
         $files = $files->get()->toArray();

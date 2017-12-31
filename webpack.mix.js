@@ -15,7 +15,7 @@ mix.js('resources/assets/js/laravel-bootstrap.js', 'public/js')
     .js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/fontawesome-all.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
-   .sass('resources/assets/sass/login_page.scss', 'public/css')
-   .sass('resources/assets/sass/folder_page.scss', 'public/css');
+   .sass('resources/assets/sass/login_page.scss', 'public/css');
+   // .sass('resources/assets/sass/folder_page.scss', 'public/css');
 
 mix.copyDirectory('resources/assets/images', 'public/images');

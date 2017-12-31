@@ -1,6 +1,8 @@
 'use strict';
 
 let context_menu = {
+    fileId: false,
+
     onOpen: function (event) {
         event.preventDefault();
 
@@ -14,17 +16,33 @@ let context_menu = {
             posY -= menuHeight;
         }
 
+        var file = $(event.target).parents('tr');
         var fileId = $(event.target).parents('tr').data('file-id');
 
         if(typeof  fileId !== 'undefined') {
+            context_menu.fileId = fileId;
             contextMenu.data('file-id', fileId);
             contextMenu.find('button[data-action="downloadFile"]').attr('disabled', false);
             contextMenu.find('button[data-action="copy"]').attr('disabled', false);
             contextMenu.find('button[data-action="rename"]').attr('disabled', false);
+            contextMenu.find('button[data-action="tag"]').attr('disabled', false);
+            contextMenu.find('button[data-action="deleteFile"]').attr('disabled', false);
         }else {
+            context_menu.fileId = false;
             contextMenu.find('button[data-action="downloadFile"]').attr('disabled', true);
             contextMenu.find('button[data-action="copy"]').attr('disabled', true);
             contextMenu.find('button[data-action="rename"]').attr('disabled', true);
+            contextMenu.find('button[data-action="tag"]').attr('disabled', true);
+            contextMenu.find('button[data-action="deleteFile"]').attr('disabled', true);
+        }
+
+        // Tag submenu
+        var tagId = file.attr('data-tag-id');
+        if(tagId) {
+            contextMenu.find('#tag-context-menu [data-tag-id]').removeClass('active');
+            contextMenu.find('#tag-context-menu [data-tag-id="'+ tagId +'"]').addClass('active');
+        }else {
+            contextMenu.find('#tag-context-menu [data-tag-id]').removeClass('active');
         }
 
         // Disable download on folders
@@ -43,32 +61,60 @@ let context_menu = {
 
     selectOption: function (event) {
         var action = $(this).data('action');
-        context_menu[action](this);
+        context_menu[action](this, event);
     },
 
-    downloadFile: function (contextMenuBtn) {
+    downloadFile: function (contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
         FileList.downloadFile(fileId)
     },
 
-    deleteFile: function (contextMenuBtn) {
+    deleteFile: function (contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
         FileList.deleteFile(fileId);
     },
 
-    newFile: function(contextMenuBtn) {
+    newFile: function(contextMenuBtn, event) {
         FileList.createFile();
     },
 
-    newFolder: function(contextMenuBtn) {
+    newFolder: function(contextMenuBtn, event) {
         FileList.createFolder();
     },
 
-    rename: function (contextMenuBtn) {
+    rename: function (contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
 
         FileList.renameFile(fileId);
     },
+    
+    tag: function (contextMenuBtn, event) {
+        let tagId = $(contextMenuBtn).data('tag-id');
+        var file = $('#file-list tbody tr[data-file-id="'+ this.fileId +'"]');
+
+        $.post(window.location.href, {tag_file: this.fileId, tag_id: tagId}).done(function (data) {
+            $('#tag-context-menu [data-tag-id]').removeClass('active');
+
+            if(tagId == file.attr('data-tag-id')) { // Removing tag
+                file.find('.file-icon .fa-circle').attr('data-tag-id', 'null');
+                file.find('.file-icon .fa-circle').data('tag-id', 'null');
+                tagId = 'null';
+            }else {
+                file.find('.file-icon .fa-circle').attr('data-tag-id', tagId);
+                file.find('.file-icon .fa-circle').data('tag-id', tagId);
+                $('#tag-context-menu [data-tag-id="'+ tagId +'"]').addClass('active');
+            }
+
+            if($('#left-menu [data-overlap="tags"] li a.active').length > 0) {
+                file.remove();
+            }
+
+            file.attr('data-tag-id', tagId);
+            file.data('data-tag-id', tagId);
+        }).fail(function (data) {
+            alert(data.responseJSON.error);
+        });
+    }
 };
 
 $('html').on('click', context_menu.hideMenu);

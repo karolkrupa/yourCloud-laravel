@@ -3,16 +3,40 @@
   z-index: 1000;
   display: none;
 
+  #tag-context-menu {
+    position: relative;
+
+    &:hover {
+      .list-group {
+        display: block;
+      }
+    }
+
+    &:hover > button:disabled ~ {
+      .list-group {
+        display: none;
+      }
+    }
+
+    .list-group {
+      display: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+    }
+  }
+
   .list-group {
     border-radius: 0;
-    border: 1px solid $primary-color;
+    //border: 1px solid $primary-color;
     font-size: .9rem;
 
     button {
       border-radius: 0;
       padding: .5rem;
-      padding-left: .8rem;
-      padding-right: .9rem;
+      padding-left: 1rem;
+      padding-right: 1.1rem;
 
       svg {
         margin-right: .4rem;
@@ -23,8 +47,13 @@
       }
 
       &:hover {
-        background-color: $text-color-alt;
-        color: white;
+        background-color: lighten($text-color, 16);
+        //color: white;
+      }
+
+      &.active {
+        background-color: lighten($text-color, 14);
+        border: none;
       }
     }
   }

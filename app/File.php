@@ -196,4 +196,16 @@ class File extends Model
 
         return $user->files()->updateExistingPivot($this->id, ['favorite' => false]);
     }
+
+    public function tag($tagId, $user = null) {
+        if(! $user) {
+            $user = Auth::user();
+        }
+
+        if($this->pivot['tag_id'] == $tagId) {
+            return $user->files()->updateExistingPivot($this->id, ['tag_id' => null]);
+        }else {
+            return $user->files()->updateExistingPivot($this->id, ['tag_id' => $tagId]);
+        }
+    }
 }

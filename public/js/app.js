@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 49);
+/******/ 	return __webpack_require__(__webpack_require__.s = 48);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -94,15 +94,15 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ 49:
+/***/ 48:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(50);
+module.exports = __webpack_require__(49);
 
 
 /***/ }),
 
-/***/ 50:
+/***/ 49:
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -118,18 +118,18 @@ $.ajaxSetup({
   headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
 });
 
+__webpack_require__(50);
+
 __webpack_require__(51);
 
 __webpack_require__(52);
 
 __webpack_require__(53);
 
+// require('./file_event');
 __webpack_require__(54);
 
-// require('./file_event');
 __webpack_require__(55);
-
-__webpack_require__(56);
 
 // window.Vue = require('vue');
 
@@ -147,7 +147,7 @@ __webpack_require__(56);
 
 /***/ }),
 
-/***/ 51:
+/***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3662,7 +3662,7 @@ function __guardMethod__(obj, methodName, transform) {
 
 /***/ }),
 
-/***/ 52:
+/***/ 51:
 /***/ (function(module, exports) {
 
 var YourCloud = {
@@ -3689,7 +3689,7 @@ window.YourCloud = YourCloud;
 
 /***/ }),
 
-/***/ 53:
+/***/ 52:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3748,7 +3748,7 @@ window.enable_dropzonejs = function () {
 
 /***/ }),
 
-/***/ 54:
+/***/ 53:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4007,7 +4007,7 @@ FileList.sort();
 
 /***/ }),
 
-/***/ 55:
+/***/ 54:
 /***/ (function(module, exports) {
 
 FileListEvents = {
@@ -4054,6 +4054,7 @@ FileListEvents = {
             // Add to favorites
             $.post(window.location.href, { add_favorite_file: fileId }).done(function (data) {
                 file.find('.favorite-btn').addClass('active');
+                file.find('.favorite-btn');
             }).fail(function (data) {
                 YourCloud.addAlert(data.responseJSON.error, 'warning');
             });
@@ -4092,13 +4093,15 @@ $('#checkbox-select-all input').click(FileList.selectAllCheckbox.onClick);
 
 /***/ }),
 
-/***/ 56:
+/***/ 55:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var context_menu = {
+    fileId: false,
+
     onOpen: function onOpen(event) {
         event.preventDefault();
 
@@ -4112,17 +4115,33 @@ var context_menu = {
             posY -= menuHeight;
         }
 
+        var file = $(event.target).parents('tr');
         var fileId = $(event.target).parents('tr').data('file-id');
 
         if (typeof fileId !== 'undefined') {
+            context_menu.fileId = fileId;
             contextMenu.data('file-id', fileId);
             contextMenu.find('button[data-action="downloadFile"]').attr('disabled', false);
             contextMenu.find('button[data-action="copy"]').attr('disabled', false);
             contextMenu.find('button[data-action="rename"]').attr('disabled', false);
+            contextMenu.find('button[data-action="tag"]').attr('disabled', false);
+            contextMenu.find('button[data-action="deleteFile"]').attr('disabled', false);
         } else {
+            context_menu.fileId = false;
             contextMenu.find('button[data-action="downloadFile"]').attr('disabled', true);
             contextMenu.find('button[data-action="copy"]').attr('disabled', true);
             contextMenu.find('button[data-action="rename"]').attr('disabled', true);
+            contextMenu.find('button[data-action="tag"]').attr('disabled', true);
+            contextMenu.find('button[data-action="deleteFile"]').attr('disabled', true);
+        }
+
+        // Tag submenu
+        var tagId = file.attr('data-tag-id');
+        if (tagId) {
+            contextMenu.find('#tag-context-menu [data-tag-id]').removeClass('active');
+            contextMenu.find('#tag-context-menu [data-tag-id="' + tagId + '"]').addClass('active');
+        } else {
+            contextMenu.find('#tag-context-menu [data-tag-id]').removeClass('active');
         }
 
         // Disable download on folders
@@ -4141,31 +4160,60 @@ var context_menu = {
 
     selectOption: function selectOption(event) {
         var action = $(this).data('action');
-        context_menu[action](this);
+        context_menu[action](this, event);
     },
 
-    downloadFile: function downloadFile(contextMenuBtn) {
+    downloadFile: function downloadFile(contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
         FileList.downloadFile(fileId);
     },
 
-    deleteFile: function deleteFile(contextMenuBtn) {
+    deleteFile: function deleteFile(contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
         FileList.deleteFile(fileId);
     },
 
-    newFile: function newFile(contextMenuBtn) {
+    newFile: function newFile(contextMenuBtn, event) {
         FileList.createFile();
     },
 
-    newFolder: function newFolder(contextMenuBtn) {
+    newFolder: function newFolder(contextMenuBtn, event) {
         FileList.createFolder();
     },
 
-    rename: function rename(contextMenuBtn) {
+    rename: function rename(contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
 
         FileList.renameFile(fileId);
+    },
+
+    tag: function tag(contextMenuBtn, event) {
+        var tagId = $(contextMenuBtn).data('tag-id');
+        var file = $('#file-list tbody tr[data-file-id="' + this.fileId + '"]');
+
+        $.post(window.location.href, { tag_file: this.fileId, tag_id: tagId }).done(function (data) {
+            $('#tag-context-menu [data-tag-id]').removeClass('active');
+
+            if (tagId == file.attr('data-tag-id')) {
+                // Removing tag
+                file.find('.file-icon .fa-circle').attr('data-tag-id', 'null');
+                file.find('.file-icon .fa-circle').data('tag-id', 'null');
+                tagId = 'null';
+            } else {
+                file.find('.file-icon .fa-circle').attr('data-tag-id', tagId);
+                file.find('.file-icon .fa-circle').data('tag-id', tagId);
+                $('#tag-context-menu [data-tag-id="' + tagId + '"]').addClass('active');
+            }
+
+            if ($('#left-menu [data-overlap="tags"] li a.active').length > 0) {
+                file.remove();
+            }
+
+            file.attr('data-tag-id', tagId);
+            file.data('data-tag-id', tagId);
+        }).fail(function (data) {
+            alert(data.responseJSON.error);
+        });
     }
 };
 

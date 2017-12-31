@@ -8,6 +8,8 @@
   // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
+@import "dropzonejs-file";
+
 .yc-template {
   display: none;
 }
@@ -42,3 +44,5 @@ html {
 @import "_left_menu";
 
 @import "file_context_menu";
+
+@import "folder_page";

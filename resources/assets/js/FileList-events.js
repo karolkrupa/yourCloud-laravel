@@ -57,7 +57,7 @@ FileListEvents = {
         }
 
 
-    }
+    },
 };
 
 FileList.selectAllCheckbox.onClick = function () {

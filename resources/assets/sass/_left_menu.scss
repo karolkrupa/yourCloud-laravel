@@ -16,6 +16,38 @@
     padding-bottom: .6rem;
     color: $text-color;
 
+    ul {
+      list-style: none;
+      padding-left: 1.5rem;
+      padding-top: .3rem;
+      margin: 0;
+
+      li > a {
+        color: $text-color !important;
+        text-decoration: none;
+
+        &.text-primary:hover, &.text-primary.active, &.text-primary > svg {
+          @extend .text-primary;
+        }
+
+        &.text-success:hover, &.text-success.active, &.text-success > svg {
+          @extend .text-success;
+        }
+
+        &.text-warning:hover, &.text-warning.active, &.text-warning > svg {
+          @extend .text-warning;
+        }
+
+        &.text-danger:hover, &.text-danger.active, &.text-danger > svg {
+          @extend .text-danger;
+        }
+
+        &.text-info:hover, &.text-info.active, &.text-info > svg {
+          @extend .text-info;
+        }
+      }
+    }
+
     &.active {
       color: $text-color-alt !important;
     }
@@ -25,7 +57,7 @@
       box-shadow: none;
     }
 
-    > svg {
+    svg {
       margin-right: .6rem;
     }
   }

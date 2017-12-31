@@ -1,6 +1,4 @@
-@import "variables";
 
-@import "dropzonejs-file";
 
 
 .files-list {
@@ -11,6 +9,52 @@
   tbody {
     tr {
       cursor: pointer;
+
+      .file-icon {
+        svg[data-tag-id='null'] {
+          visibility: hidden;
+        }
+
+        svg[data-tag-id='1'] {
+          @extend .text-primary;
+        }
+
+        svg[data-tag-id='2'] {
+          @extend .text-success;
+        }
+
+        svg[data-tag-id='3'] {
+          @extend .text-danger;
+        }
+
+        svg[data-tag-id='4'] {
+          @extend .text-warning;
+        }
+
+        svg[data-tag-id='5'] {
+          @extend .text-info;
+        }
+      }
+
+      //.tag-1 {
+      //  @extend .text-primary;
+      //}
+      //
+      //.tag-2 {
+      //  @extend .text-success;
+      //}
+      //
+      //.tag-3 {
+      //  @extend .text-danger;
+      //}
+      //
+      //.tag-4 {
+      //  @extend .text-warning;
+      //}
+      //
+      //.tag-5 {
+      //  @extend .text-info;
+      //}
 
       td.favorite-btn {
 

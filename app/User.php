@@ -32,7 +32,7 @@ class User extends Authenticatable
 
 //        return $this->hasMany('\App\File', 'users_id', 'id');
         return $this->belongsToMany('App\File', 'users_files', 'users_id', 'files_id')
-            ->withPivot(['favorite', 'permissions'])
+            ->withPivot(['favorite', 'permissions', 'tag_id'])
             ->pivot();
     }
 }

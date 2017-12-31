@@ -89,6 +89,14 @@ class ResourceController extends Controller
                     $request->post('remove_favorite_file')
                 );
 
+            }else if($request->has('tag_file')) {
+
+                return $this->tagFile(
+                    $request,
+                    $request->post('tag_file'),
+                    $request->post('tag_id')
+                );
+
             }else {
 
                 return $this->storeFile(
@@ -328,5 +336,20 @@ class ResourceController extends Controller
         $file = Auth::user()->files()->find($id);
 
         return FileSender::shareFiles($file);
+    }
+
+    public function tagFile(Request $request, $fileId, $tagId) {
+        $file = Auth::user()->files()->find($fileId);
+
+        if($file->tag($tagId)) {
+            return Response()->json([
+                'succes' => true
+            ], 201);
+        }else {
+            return Response()->json([
+                'error' => 'FIle not found',
+                'code' => 404
+            ], 404);
+        }
     }
 }
