@@ -112,6 +112,7 @@
                     data-file-name="name"
                     data-file-size="size"
                     data-file-updated-at="date"
+                    data-tag-id="null"
             >
                 <!-- fa-folder/fa-file -->
                 {{--<td class="file-icon"><i class="fas" style="font-size: 25px"></i></td>--}}

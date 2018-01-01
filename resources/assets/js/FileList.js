@@ -120,9 +120,9 @@ var FileList = {
         newFile.removeClass(fileTemplateClass);
 
         if(file['type'] == '1') {
-            newFile.find('.file-icon [data-fa-processed]').addClass(fileIcon);
+            newFile.find('.file-icon [data-fa-processed]').first().addClass(fileIcon);
         }else {
-            newFile.find('.file-icon [data-fa-processed]').addClass(folderIcon);
+            newFile.find('.file-icon [data-fa-processed]').first().addClass(folderIcon);
         }
 
         FileList.sort();
