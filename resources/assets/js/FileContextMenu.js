@@ -1,26 +1,28 @@
 'use strict';
 
-let context_menu = {
+// Context Menu object
+let ContextMenu = {
     fileId: false,
 
+    // On open context menu
     onOpen: function (event) {
         event.preventDefault();
 
-        var contextMenu = $('#file-context-menu');
+        let contextMenu = $('#file-context-menu');
 
-        var posX = event.pageX - $(contextMenu).parent().position().left;
-        var posY = event.pageY - $(contextMenu).parent().position().top;
-        var menuHeight = $(contextMenu).height();
+        let posX = event.pageX - $(contextMenu).parent().position().left;
+        let posY = event.pageY - $(contextMenu).parent().position().top;
+        let menuHeight = $(contextMenu).height();
 
         if((posY + menuHeight + 50) > $(document).height()) {
             posY -= menuHeight;
         }
 
-        var file = $(event.target).parents('tr');
-        var fileId = $(event.target).parents('tr').data('file-id');
+        let file = $(event.target).parents('tr');
+        let fileId = $(event.target).parents('tr').data('file-id');
 
         if(typeof  fileId !== 'undefined') {
-            context_menu.fileId = fileId;
+            ContextMenu.fileId = fileId;
             contextMenu.data('file-id', fileId);
             contextMenu.find('button[data-action="downloadFile"]').attr('disabled', false);
             contextMenu.find('button[data-action="copy"]').attr('disabled', false);
@@ -28,7 +30,7 @@ let context_menu = {
             contextMenu.find('button[data-action="tag"]').attr('disabled', false);
             contextMenu.find('button[data-action="deleteFile"]').attr('disabled', false);
         }else {
-            context_menu.fileId = false;
+            ContextMenu.fileId = false;
             contextMenu.find('button[data-action="downloadFile"]').attr('disabled', true);
             contextMenu.find('button[data-action="copy"]').attr('disabled', true);
             contextMenu.find('button[data-action="rename"]').attr('disabled', true);
@@ -37,19 +39,13 @@ let context_menu = {
         }
 
         // Tag submenu
-        var tagId = file.attr('data-tag-id');
+        let tagId = file.attr('data-tag-id');
         if(tagId) {
             contextMenu.find('#tag-context-menu [data-tag-id]').removeClass('active');
             contextMenu.find('#tag-context-menu [data-tag-id="'+ tagId +'"]').addClass('active');
         }else {
             contextMenu.find('#tag-context-menu [data-tag-id]').removeClass('active');
         }
-
-        // Disable download on folders
-        // var fileType = $(event.target).parents('tr').data('file-type');
-        // if(fileType == 0) {
-        //     $(selector).find('button[data-action="downloadFile"]').attr('disabled', true);
-        // }
 
         contextMenu.css('top', posY).css('left', posX);
         contextMenu.show();
@@ -60,17 +56,17 @@ let context_menu = {
     },
 
     selectOption: function (event) {
-        var action = $(this).data('action');
-        context_menu[action](this, event);
+        let action = $(this).data('action');
+        ContextMenu[action](this, event);
     },
 
     downloadFile: function (contextMenuBtn, event) {
-        var fileId = $('#file-context-menu').data('file-id');
+        let fileId = $('#file-context-menu').data('file-id');
         FileList.downloadFile(fileId)
     },
 
     deleteFile: function (contextMenuBtn, event) {
-        var fileId = $('#file-context-menu').data('file-id');
+        let fileId = $('#file-context-menu').data('file-id');
         FileList.deleteFile(fileId);
     },
 
@@ -83,14 +79,14 @@ let context_menu = {
     },
 
     rename: function (contextMenuBtn, event) {
-        var fileId = $('#file-context-menu').data('file-id');
+        let fileId = $('#file-context-menu').data('file-id');
 
         FileList.renameFile(fileId);
     },
-    
+
     tag: function (contextMenuBtn, event) {
         let tagId = $(contextMenuBtn).data('tag-id');
-        var file = $('#file-list tbody tr[data-file-id="'+ this.fileId +'"]');
+        let file = $('#file-list tbody tr[data-file-id="'+ this.fileId +'"]');
 
         $.post(window.location.href, {tag_file: this.fileId, tag_id: tagId}).done(function (data) {
             $('#tag-context-menu [data-tag-id]').removeClass('active');
@@ -112,14 +108,16 @@ let context_menu = {
             file.attr('data-tag-id', tagId);
             file.data('data-tag-id', tagId);
         }).fail(function (data) {
-            alert(data.responseJSON.error);
+            YourCloud.addAlert(data.responseJSON.error, 'warning');
         });
     }
 };
 
-$('html').on('click', context_menu.hideMenu);
+window.ContextMenu = ContextMenu;
 
-$('#content').on('contextmenu', context_menu.onOpen);
+$('html').on('click', ContextMenu.hideMenu);
 
-$('#file-context-menu button').click(context_menu.selectOption);
+$('#content').on('contextmenu', ContextMenu.onOpen);
+
+$('#file-context-menu button').click(ContextMenu.selectOption);
 

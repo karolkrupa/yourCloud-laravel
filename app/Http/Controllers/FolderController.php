@@ -2,29 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\File;
-use App\Helpers\FileSender;
-use App\Helpers\UnitConverter;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use Chumper\Zipper\Zipper;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
+/**
+ * Class FolderController
+ * @package App\Http\Controllers
+ */
 class FolderController extends Controller
 {
     private $folderId = 0;
     private $folderPath;
 
+    /**
+     * FolderController constructor.
+     * @param $folderId
+     * @param $folderPath
+     */
     function __construct($folderId, $folderPath)
     {
         $this->folderId = $folderId;
         $this->folderPath = $folderPath;
     }
 
+    /**
+     * @param Request $request
+     * @param $userName
+     * @param string $path
+     * @return Response
+     */
     public function route(Request $request, $userName, $path = "") {
 
         return $this->index($request, $userName, $path);

@@ -6,21 +6,28 @@ use Illuminate\Http\Request;
 use App\File;
 use App\Helpers\FileSender;
 use App\Helpers\UnitConverter;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use Chumper\Zipper\Zipper;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 
+/**
+ * Class ResourceController
+ * @package App\Http\Controllers
+ */
 class ResourceController extends Controller
 {
     private $folderId = 0;
     private $folderPath;
 
 
-
+    /**
+     * Routes the request to proper method.
+     *
+     * @param Request $request
+     * @param $userName
+     * @param string $path
+     * @return bool|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|Response|string|\Symfony\Component\HttpFoundation\Response
+     */
     function route(Request $request, $userName, $path = "") {
         $this->_getFolderPath($request);
 
@@ -28,6 +35,7 @@ class ResourceController extends Controller
             abort(404);
         }
 
+        // Checks whether user is in own directory
         if(strtolower($userName) != strtolower(Auth::user()->name)) {
             return 'Inny user';
         }
@@ -77,21 +85,21 @@ class ResourceController extends Controller
 
             }else if($request->has('add_favorite_file')) {
 
-                return $this->addFavoriteFile(
+                return $this->setFileAsFavorite(
                     $request,
                     $request->post('add_favorite_file')
                 );
 
             }else if($request->has('remove_favorite_file')) {
 
-                return $this->removeFavoriteFile(
+                return $this->setFileAsRegular(
                     $request,
                     $request->post('remove_favorite_file')
                 );
 
             }else if($request->has('tag_file')) {
 
-                return $this->tagFile(
+                return $this->setFileTagId(
                     $request,
                     $request->post('tag_file'),
                     $request->post('tag_id')
@@ -108,11 +116,14 @@ class ResourceController extends Controller
     }
 
 
+    /**
+     * Stores file in db and local storage.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function storeFile(Request $request)
     {
-        $this->folderId = $this->_getFolderId($request);
-        $this->folderPath = $this->_getFolderPath($request);
-
         $fileAttr['parent_id'] = $this->folderId;
 
         $fileAttr['path'] = $request->file('file')->store($this->folderPath);
@@ -127,10 +138,16 @@ class ResourceController extends Controller
         return Response()->json($file, 201);
     }
 
+    /**
+     * Creates a folder.
+     *
+     * @param Request $request
+     * @param $folderName
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function createFolder(Request $request, $folderName) {
         $folder = [
             'parent_id' => $this->folderId,
-//            'path' => $this->folderPath . '/' . $folderName,
             'name' => $folderName,
             'mime_type' => 'folder',
             'size' => 0,
@@ -154,6 +171,14 @@ class ResourceController extends Controller
         }
     }
 
+    /**
+     * Creates file.
+     *
+     * @param Request $request
+     * @param $fileName
+     * @param $fileContent
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function createFile(Request $request, $fileName, $fileContent) {
         $filePath = $this->folderPath. DIRECTORY_SEPARATOR . $fileName;
         $path = Storage::put($filePath, $fileContent);
@@ -173,6 +198,14 @@ class ResourceController extends Controller
         return Response()->json($file, 201);
     }
 
+    /**
+     * Renames file.
+     *
+     * @param Request $request
+     * @param $fileName
+     * @param $fileId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function renameFile(Request $request, $fileName, $fileId) {
         $file = Auth::user()->files()->find($fileId);
 
@@ -209,6 +242,13 @@ class ResourceController extends Controller
         }
     }
 
+    /**
+     * Removes file.
+     *
+     * @param Request $request
+     * @param $fileId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deleteFile(Request $request, $fileId) {
         $file = Auth::user()->files()->find($fileId);
 
@@ -232,10 +272,17 @@ class ResourceController extends Controller
         }
     }
 
-    public function addFavoriteFile(Request $request, $id) {
+    /**
+     * Sets the file as favorite.
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setFileAsFavorite(Request $request, $id) {
         $file = Auth::user()->files()->find($id);
 
-        if($file && $file->addToFavorites()) {
+        if($file && $file->setAsFavorite()) {
 
             return Response()->json(
                 [
@@ -252,10 +299,17 @@ class ResourceController extends Controller
         }
     }
 
-    public function removeFavoriteFile(Request $request, $id) {
+    /**
+     * Sets the file as regular.
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setFileAsRegular(Request $request, $id) {
         $file = Auth::user()->files()->find($id);
 
-        if($file && $file->removeFromFavorites()) {
+        if($file && $file->setAsRegular()) {
             return Response()->json(
                 [
                     'success' => true
@@ -271,6 +325,12 @@ class ResourceController extends Controller
         }
     }
 
+    /**
+     * Gets local folder path and id
+     *
+     * @param Request $request
+     * @return array|string|void
+     */
     private function _getFolderPath(Request $request) {
         if($request->path()) {
             $path = urldecode($request->path());
@@ -332,16 +392,36 @@ class ResourceController extends Controller
         }
     }
 
+    /**
+     * Sends file to user browser.
+     *
+     * @param Request $request
+     * @param $id
+     * @return bool|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     */
     public function shareFile(Request $request, $id) {
         $file = Auth::user()->files()->find($id);
 
         return FileSender::shareFiles($file);
     }
 
-    public function tagFile(Request $request, $fileId, $tagId) {
+    /**
+     * Sets file tag.
+     *
+     * @param Request $request
+     * @param $fileId
+     * @param $tagId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setFileTagId(Request $request, $fileId, $tagId) {
         $file = Auth::user()->files()->find($fileId);
 
-        if($file->tag($tagId)) {
+        // Remove tag if file is in selected tag
+        if($file->pivot['tag_id'] == $tagId) {
+            $tagId = null;
+        }
+
+        if($file->setTagId($tagId)) {
             return Response()->json([
                 'succes' => true
             ], 201);

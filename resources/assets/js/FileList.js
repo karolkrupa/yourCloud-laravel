@@ -14,19 +14,19 @@ var FileList = {
     '                    </div>',
 
     sort: function (asc = true) {
-        var files = $('#file-list tbody tr[data-file-type="1"]');
-        var folders = $('#file-list tbody tr[data-file-type="0"]');
+        let files = $('#file-list tbody tr[data-file-type="1"]');
+        let folders = $('#file-list tbody tr[data-file-type="0"]');
         const fileContainer = '#file-list tbody';
         const fileNameAttr = 'data-file-name';
 
-        var multipler = asc? 1 : -1;
+        let sortMultipler = asc? 1 : -1;
 
         folders.sort(function(a,b){
-            return $(a).attr(fileNameAttr).localeCompare($(b).attr(fileNameAttr), {}, {numeric: true})*multipler;
+            return $(a).attr(fileNameAttr).localeCompare($(b).attr(fileNameAttr), {}, {numeric: true})*sortMultipler;
         }).appendTo(fileContainer);
 
         files.sort(function(a, b){
-            return $(a).attr(fileNameAttr).localeCompare($(b).attr(fileNameAttr), {}, {numeric: true})*multipler;
+            return $(a).attr(fileNameAttr).localeCompare($(b).attr(fileNameAttr), {}, {numeric: true})*sortMultipler;
         }).appendTo(fileContainer);
 
         this.lastSort = asc;
@@ -39,8 +39,8 @@ var FileList = {
     },
 
     renameFile: function (fileIdOrFile) {
-        var file;
-        var inputFileName = $(FileList.fileInputNameTemplate);
+        let file;
+        let inputFileName = $(FileList.fileInputNameTemplate);
 
         if(typeof fileIdOrFile === 'object') {
             file = fileIdOrFile;
@@ -57,11 +57,12 @@ var FileList = {
     },
 
     renameFileExec: function (event) {
-        if($(event.target).is('button') || $(event.target).parents('button').is('button')) { // Is event on button
-            var btn = ($(event.target).is('button'))? $(event.target) : $(event.target).parents('button');
-            var file = $(btn.parents('tr'));
-            var newName;
-            var fileId = file.data('file-id');
+        // Is event on button
+        if($(event.target).is('button') || $(event.target).parents('button').is('button')) {
+            let btn = ($(event.target).is('button'))? $(event.target) : $(event.target).parents('button');
+            let file = $(btn.parents('tr'));
+            let newName;
+            let fileId = file.data('file-id');
 
             if(btn.data('action') == 'save') {
                 newName = file.find('input').val();
@@ -84,71 +85,76 @@ var FileList = {
         }
     },
 
-    addFileToList: function (file) {
-        var newFile = $('#file-list tbody tr.yc-template').clone();
+    addFileToList: function (fileAttr) {
+        let newFile = $('#file-list tbody tr.yc-template').clone();
         const fileContainer = '#file-list tbody';
         const fileTemplateClass = 'yc-template';
         const fileIcon = 'fa-file';
         const folderIcon = 'fa-folder';
-        newFile.find('.file-name').html(file['name']);
 
-        if(file['type'] == 0) {
-            file['size_normalized'] = "-";
+        // Setting displayed folder size
+        if(fileAttr['type'] == 0) {
+            fileAttr['size_normalized'] = "-";
         }
 
-        newFile.find('.file-size').html(file['size_normalized']);
-        newFile.find('.file-updated-at').html(file['updated_at']);
+        // File Name
+        newFile.find('.file-name').html(fileAttr['name']);
+        // File size
+        newFile.find('.file-size').html(fileAttr['size_normalized']);
+        // Last modify
+        newFile.find('.file-updated-at').html(fileAttr['updated_at']);
 
-        if(file['favorite']) {
+        // Activate favorite button
+        if(fileAttr['favorite']) {
             newFile.find('.favorite-btn').addClass('active');
         }
 
+        // Setting file attrubutes
+        newFile.attr('data-file-id', fileAttr['id']);
+        newFile.attr('data-parent-id', fileAttr['parent_id']);
+        newFile.attr('data-file-type', fileAttr['type']);
+        newFile.attr('data-file-name', fileAttr['name']);
+        newFile.attr('data-file-size', fileAttr['size']);
+        newFile.attr('data-file-updated-at', fileAttr['updated_at']);
 
-        // Not work
-        // newFile.find('.favorite-btn [data-fa-processed]').attr('data-prefix', 'fas');
-        // newFile.find('.favorite-btn [data-fa-processed]').data('prefix', 'fas');
-
-        newFile.attr('data-file-id', file['id']);
-        newFile.attr('data-parent-id', file['parent_id']);
-        newFile.attr('data-file-type', file['type']);
-        newFile.attr('data-file-name', file['name']);
-        newFile.attr('data-file-size', file['size']);
-        newFile.attr('data-file-updated-at', file['updated_at']);
-
+        // Appendig to file container
         newFile.appendTo(fileContainer);
 
-        newFile.removeClass(fileTemplateClass);
-
-        if(file['type'] == '1') {
+        // Setting file icon
+        if(fileAttr['type'] == '1') {
             newFile.find('.file-icon [data-fa-processed]').first().addClass(fileIcon);
         }else {
             newFile.find('.file-icon [data-fa-processed]').first().addClass(folderIcon);
         }
 
+        // Remove template class
+        newFile.removeClass(fileTemplateClass);
+
+        // Sorting files
         FileList.sort();
 
         return newFile;
     },
-    
+
     createFile: function () {
         $.post(window.location.href, {new_file: "New File", file_content: ''}).done(function (data) {
-            var fileId = FileList.addFileToList(data).attr('data-file-id');
+            let fileId = FileList.addFileToList(data).attr('data-file-id');
 
             FileList.renameFile(fileId);
         })
     },
-    
+
     createFolder: function () {
         $.post(window.location.href, {new_folder: "New Folder"}).done(function (data) {
-            var fileId = FileList.addFileToList(data).attr('data-file-id');
+            let fileId = FileList.addFileToList(data).attr('data-file-id');
 
             FileList.renameFile(fileId);
         })
     },
 
     downloadFile: function (fileIdOrFile = false) {
-        var selectedFiles = $('#file-list tbody tr.active');
-        var uri = '?';
+        let selectedFiles = $('#file-list tbody tr.active');
+        let uri = '?';
 
         if (selectedFiles.length > 0) {
             let i = 0;
@@ -158,7 +164,7 @@ var FileList = {
                 i++;
             });
         }else if(fileIdOrFile) {
-            var id;
+            let id;
             if(typeof fileIdOrFile === 'object') {
                 id = $(fileIdOrFile).data('file-id');
             }else {
@@ -172,8 +178,8 @@ var FileList = {
     },
 
     deleteFile: function (fileIdOrFile) {
-        var fileId;
-        var file;
+        let fileId;
+        let file;
 
         if(typeof  fileIdOrFile === 'object') {
             fileId = $(fileIdOrFile).attr('data-file-id');
@@ -192,11 +198,13 @@ var FileList = {
 
     selectAllCheckbox: {
         check: function () {
-            $('#checkbox-select-all input').prop('checked', true);
+            const selectAllcheckobx = '#checkbox-select-all input';
+            $(selectAllcheckobx).prop('checked', true);
         },
 
         uncheck: function () {
-            $('#checkbox-select-all input').prop('checked', false);
+            const selectAllcheckobx = '#checkbox-select-all input';
+            $(selectAllcheckobx).prop('checked', false);
         }
     },
 };

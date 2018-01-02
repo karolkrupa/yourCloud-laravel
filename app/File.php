@@ -2,13 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Mockery\Exception;
 
+/**
+ * Class File
+ * @package App
+ */
 class File extends Model
 {
     protected $fillable = [
@@ -40,12 +42,25 @@ class File extends Model
 //        });
 //    }
 
+    /**
+     * Adds attributes to the returned model.
+     *
+     * @param $query
+     * @return mixed
+     */
     public function scopePivot($query) {
         $query->addSelect(new Expression('`users_files`.`favorite` as `favorite`'));
         $query->addSelect(new Expression('`users_files`.`permissions` as `permissions`'));
+        $query->addSelect(new Expression('`users_files`.`tag_id` as `tag_id`'));
         return $query->addSelect(new Expression('`files`.*'));
     }
 
+    /**
+     * Returns file name with suitable postfix. (If file with this name already exist)
+     *
+     * @param $fileAttr
+     * @return string
+     */
     static private function _getNameIfIsset($fileAttr) {
         $user = User::find($fileAttr['users_id']);
 
@@ -60,7 +75,6 @@ class File extends Model
             // Check wheter files with same name exist
             $check = $user->files()
                 ->where('parent_id', $fileAttr['parent_id'])
-//                ->where('name', 'REGEXP', '^'. $name .'([[.(.]][[:digit:]]+[[.).]])*[[...]].*$')
                 ->where('name', 'REGEXP', '^'. $fileAttr['name'] .' [[.(.]][[:digit:]]+[[.).]]$')
                 ->orderBy('name', 'DESC')
                 ->first();
@@ -78,11 +92,23 @@ class File extends Model
         return $fileAttr['name'];
     }
 
+    /**
+     * Returns User files.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo('App\User', 'users_id');
     }
 
+    /**
+     * Adds file for provided user or logged user.
+     *
+     * @param $fileAttr
+     * @param User|null $user
+     * @return mixed
+     */
     static public function addFile($fileAttr, User $user = null) {
         if($user == null) {
             $user = User::findOrFail($fileAttr['users_id']);
@@ -96,9 +122,15 @@ class File extends Model
         $fileAttr['name'] = self::_getNameIfIsset($fileAttr);
 
         return $user->files()->save(new File($fileAttr));
-//        return File::create($fileAttr);
     }
 
+    /**
+     * Adds folder for provided user or logged user.
+     *
+     * @param $fileAttr
+     * @param User|null $user
+     * @return mixed
+     */
     static public function addFolder($fileAttr, User $user = null) {
         if($user == null) {
             $user = User::findOrFail($fileAttr['users_id']);
@@ -112,9 +144,13 @@ class File extends Model
         $fileAttr['name'] = self::_getNameIfIsset($fileAttr);
 
         return $user->files()->save(new File($fileAttr));
-//        return File::create($fileAttr);
     }
 
+    /**
+     * Sends file to user browser.
+     *
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     */
     public function sendFile() {
         $response = response(Storage::get($this->path));
 
@@ -131,30 +167,61 @@ class File extends Model
         return $response;
     }
 
+    /**
+     * Checks whether selected file is folder.
+     *
+     * @return bool
+     */
     public function isFolder() {
         return $this->type == 0;
     }
 
+    /**
+     * Checks whether selected file is file.
+     *
+     * @return bool
+     */
     public function isFile() {
         return $this->type == 1;
     }
 
+    /**
+     * Returns collection of folders. (If selected file is a folder)
+     * @return mixed
+     */
     public function getFolders() {
         return File::where('parent_id', $this->id)
             ->where('type', 0)
             ->get();
     }
 
+    /**
+     * Returns Collection of files. (If selected file is a folder)
+     *
+     * @return Collection
+     */
     public function getFiles() {
         return File::where('parent_id', $this->id)
             ->where('type', 1)
             ->get();
     }
 
+    /**
+     * Returns absolute path to file.
+     *
+     * @return string
+     */
     public function getAbsolutePath() {
         return storage_path('app'). DIRECTORY_SEPARATOR . $this->path;
     }
 
+    /**
+     * Deletes the model and removes file from the database.
+     *
+     * @return bool|null
+     *
+     * @throws \Exception
+     */
     public function delete() {
         if($this->isFolder()) {
             $files = File::where('parent_id', $this->id)
@@ -173,7 +240,13 @@ class File extends Model
         return parent::delete();
     }
 
-    public function addToFavorites(User $user = null) {
+    /**
+     * Marks the file as a favorite.
+     *
+     * @param User|null $user
+     * @return bool
+     */
+    public function setAsFavorite(User $user = null) {
         if(! $user) {
             $user = Auth::user();
         }
@@ -185,7 +258,13 @@ class File extends Model
         return $user->files()->updateExistingPivot($this->id, ['favorite' => true]);
     }
 
-    public function removeFromFavorites(User $user = null) {
+    /**
+     * Marks the file as regular.
+     *
+     * @param User|null $user
+     * @return bool
+     */
+    public function setAsRegular(User $user = null) {
         if(! $user) {
             $user = Auth::user();
         }
@@ -197,15 +276,18 @@ class File extends Model
         return $user->files()->updateExistingPivot($this->id, ['favorite' => false]);
     }
 
-    public function tag($tagId, $user = null) {
+    /**
+     * Adds the file to selected tag
+     *
+     * @param $tagId
+     * @param null $user
+     * @return mixed
+     */
+    public function setTagId($tagId = null, User $user = null) {
         if(! $user) {
             $user = Auth::user();
         }
 
-        if($this->pivot['tag_id'] == $tagId) {
-            return $user->files()->updateExistingPivot($this->id, ['tag_id' => null]);
-        }else {
-            return $user->files()->updateExistingPivot($this->id, ['tag_id' => $tagId]);
-        }
+        return $user->files()->updateExistingPivot($this->id, ['tag_id' => $tagId]);
     }
 }

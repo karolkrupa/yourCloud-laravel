@@ -24,7 +24,7 @@ require('./FileList');
 // require('./file_event');
 require('./FileList-events');
 
-require('./file_context_menu');
+require('./FileContextMenu');
 
 
 

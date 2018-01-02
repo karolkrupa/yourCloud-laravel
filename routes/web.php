@@ -12,25 +12,18 @@
 */
 
 
-
 Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/', function () {
     return redirect('/' . Auth::user()->name);
 })->middleware('auth');
 
-//Route::resource('/folder', Folder::class);
-
-Route::get('/test', function () {
-
-});
 
 Route::get('/logout', function () {
     Auth::logout();
     return "Wylogowany";
 });
 
-Route::any('{user_name}/{path?}', 'ResourceController@route')->where('path', '(.*)')->middleware('auth');
-//Route::post('{user_name}/{path?}', 'Folder@store')->where('path', '(.*)')->middleware('auth');
+Route::any('{user_name}/{path?}', 'ResourceController@route')
+    ->where('path', '(.*)')
+    ->middleware('auth');

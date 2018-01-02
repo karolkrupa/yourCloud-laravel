@@ -5,6 +5,10 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * Class User
+ * @package App
+ */
 class User extends Authenticatable
 {
     use Notifiable;
@@ -27,10 +31,12 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * Returns list of files
+     *
+     * @return mixed
+     */
     public function files() {
-//        $favorties = File::where('users_id', $this->id)->has('favoriteFiles');
-
-//        return $this->hasMany('\App\File', 'users_id', 'id');
         return $this->belongsToMany('App\File', 'users_files', 'users_id', 'files_id')
             ->withPivot(['favorite', 'permissions', 'tag_id'])
             ->pivot();
