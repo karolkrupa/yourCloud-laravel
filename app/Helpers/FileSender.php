@@ -20,17 +20,7 @@ use Illuminate\Support\Facades\Storage;
 class FileSender
 {
     static private function zipperAddFolder($zipper, $folder, $prevPath = '') {
-//        $files = Auth::user()->files()
-//            ->where('parent_id', $folder->id)
-//            ->where('type', 1)
-//            ->get();
-
         $files = $folder->getFiles();
-
-//        $folders = Auth::user()->files()
-//            ->where('parent_id', $folder->id)
-//            ->where('type', 0)
-//            ->get();
 
         $folders = $folder->getFolders();
 

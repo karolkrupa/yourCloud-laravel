@@ -1,4 +1,4 @@
-let FileModel = Backbone.Model.extend({
+window.App.FileModel = Backbone.Model.extend({
     urlRoot: '/api/v1/file',
 
     safeSave: function(attributes = {}, options = {}) {
@@ -26,8 +26,6 @@ let FileModel = Backbone.Model.extend({
         location.replace('/download/' + this.attributes.id);
     }
 });
-
-window.App.FileModel = FileModel;
 
 
 let createNewFile = function() {

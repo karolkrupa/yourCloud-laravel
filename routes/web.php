@@ -15,13 +15,13 @@
 Auth::routes();
 
 Route::get('/', function() {
-    return rederict('/files');
-});
+    return redirect('/files');
+})->middleware('auth');
 
-Route::get('/download/{id}', 'Api\FileController@authSend');
-Route::get('/download/share/{id}', 'Api\FileController@sharedSend');
+Route::get('/download/{id}', 'Api\FileController@authSend')->middleware('auth');
+Route::get('/download/share/{id}', 'Api\FileController@sharedSend')->middleware('auth');
 
-Route::get('/files/{path?}', 'MainController@index')->where('path', '(.*)');
+Route::get('/files/{path?}', 'MainController@index')->where('path', '(.*)')->middleware('auth');
 
 
 Route::get('/logout', function () {

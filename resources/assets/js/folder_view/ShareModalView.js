@@ -1,4 +1,4 @@
-let ShareModalView = Backbone.View.extend({
+window.App.shareModalView = Backbone.View.extend({
     model: false,
     template: _.template(require('./templates/ShareModalView.html')),
     attributes: {
@@ -110,5 +110,3 @@ let ShareModalView = Backbone.View.extend({
         });
     }
 });
-
-window.App.shareModalView = new ShareModalView;
