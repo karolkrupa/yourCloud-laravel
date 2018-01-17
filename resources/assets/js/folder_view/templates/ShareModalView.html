@@ -1,0 +1,61 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Sharing settings</h5>
+            <button type="button" class="close" data-action="cancel">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <h5>Sharing by link</h5>
+            <div class="input-group share-link">
+                <input class="form-control" type="text" readonly placeholder="Use button to create link" value="{{= share_link? location.origin + '/download/share/' + share_link : '' }}">
+                <span class="input-group-btn">
+                    <button class="btn btn-success" type="button" data-action="shareLinkToggle">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </span>
+            </div>
+            <hr>
+
+            <h5>Sharing for user</h5>
+            <div class="input-group share-for-user">
+                <input class="form-control user-search" type="text" placeholder="Nickname">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button" data-action="findUser">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </span>
+                <div class="users-list">
+                    <ul>
+                        <li>User1</li>
+                        <li>User2</li>
+                    </ul>
+                </div>
+            </div>
+
+            <table class="table table-hover mt-3 shared-users">
+                <thead>
+                    <tr>
+                        <th scope="col">Nickname</th>
+                        <th scope="col" class="w-25 text-center">Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ _.each(share_users, function(user) { }}
+                    {{ if(! user) return; }}
+                    <tr data-user-id="{{= user.id }}">
+                        <td class="user-name">{{= user.name }}</td>
+                        <td class="remove-sharing text-center" role="button">
+                            <i class="fas fa-unlink"></i>
+                        </td>
+                    </tr>
+                    {{ }); }}
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-action="cancel">Close</button>
+        </div>
+    </div>
+</div>

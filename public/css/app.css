@@ -9629,7 +9629,7 @@ a.bg-dark:hover {
 #left-menu .btn ul li > a.text-primary:hover,
 #left-menu .btn ul li > a.text-primary.active,
 #left-menu .btn ul li > a.text-primary > svg,
-.files-list tbody tr .file-icon svg[data-tag-id='1'] {
+.files-list tbody tr[data-tag-id='1'] .file-icon svg.fa-circle {
   color: #007bff !important;
 }
 
@@ -9654,7 +9654,7 @@ a.text-secondary:hover {
 #left-menu .btn ul li > a.text-success:hover,
 #left-menu .btn ul li > a.text-success.active,
 #left-menu .btn ul li > a.text-success > svg,
-.files-list tbody tr .file-icon svg[data-tag-id='2'] {
+.files-list tbody tr[data-tag-id='2'] .file-icon svg.fa-circle {
   color: #28a745 !important;
 }
 
@@ -9670,7 +9670,7 @@ a.text-success:hover,
 #left-menu .btn ul li > a.text-info:hover,
 #left-menu .btn ul li > a.text-info.active,
 #left-menu .btn ul li > a.text-info > svg,
-.files-list tbody tr .file-icon svg[data-tag-id='5'] {
+.files-list tbody tr[data-tag-id='5'] .file-icon svg.fa-circle {
   color: #17a2b8 !important;
 }
 
@@ -9686,7 +9686,7 @@ a.text-info:hover,
 #left-menu .btn ul li > a.text-warning:hover,
 #left-menu .btn ul li > a.text-warning.active,
 #left-menu .btn ul li > a.text-warning > svg,
-.files-list tbody tr .file-icon svg[data-tag-id='4'] {
+.files-list tbody tr[data-tag-id='4'] .file-icon svg.fa-circle {
   color: #ffc107 !important;
 }
 
@@ -9702,7 +9702,7 @@ a.text-warning:hover,
 #left-menu .btn ul li > a.text-danger:hover,
 #left-menu .btn ul li > a.text-danger.active,
 #left-menu .btn ul li > a.text-danger > svg,
-.files-list tbody tr .file-icon svg[data-tag-id='3'] {
+.files-list tbody tr[data-tag-id='3'] .file-icon svg.fa-circle {
   color: #dc3545 !important;
 }
 
@@ -9938,8 +9938,48 @@ html {
   cursor: pointer;
 }
 
-.files-list tbody tr .file-icon svg[data-tag-id='null'] {
+.files-list tbody tr .file-controls {
+  color: #197bce;
+}
+
+.files-list tbody tr .file-controls svg {
+  display: none;
+}
+
+.files-list tbody tr[data-link-share='true'] .file-controls .share-link-icon {
+  display: inline-block;
+}
+
+.files-list tbody tr[data-user-share='true'] .file-controls .share-user-icon {
+  display: inline-block;
+}
+
+.files-list tbody tr .file-icon svg.fa-circle {
   visibility: hidden;
+}
+
+.files-list tbody tr[data-tag-id='1'] .file-icon svg.fa-circle {
+  visibility: visible;
+}
+
+.files-list tbody tr[data-tag-id='2'] .file-icon svg.fa-circle {
+  visibility: visible;
+}
+
+.files-list tbody tr[data-tag-id='3'] .file-icon svg.fa-circle {
+  visibility: visible;
+}
+
+.files-list tbody tr[data-tag-id='4'] .file-icon svg.fa-circle {
+  visibility: visible;
+}
+
+.files-list tbody tr[data-tag-id='5'] .file-icon svg.fa-circle {
+  visibility: visible;
+}
+
+.files-list tbody tr[data-favorite='true'] .favorite-btn {
+  color: #197bce;
 }
 
 .files-list tbody tr td.favorite-btn:before {
@@ -9995,5 +10035,37 @@ html {
 #breadcrumb .breadcrumb {
   background-color: #262626;
   border-radius: 0;
+}
+
+#fileSharingModal .remove-sharing svg {
+  cursor: pointer;
+}
+
+#fileSharingModal .remove-sharing svg:hover {
+  color: #197bce;
+}
+
+#fileSharingModal .share-for-user .users-list {
+  position: absolute;
+  border: 1px solid #595959;
+  background: white;
+  width: 100%;
+  top: 100%;
+  z-index: 10;
+  display: none;
+}
+
+#fileSharingModal .share-for-user .users-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#fileSharingModal .share-for-user .users-list ul li {
+  padding: .2rem .7rem;
+}
+
+#fileSharingModal .share-for-user .users-list ul li:hover {
+  background: #4aa0e9;
 }
 

@@ -11,6 +11,17 @@ let mix = require('laravel-mix');
  |
  */
 
+mix.webpackConfig({
+    module: {
+        loaders: [
+            {
+                test: /\.html$/,
+                loader: "underscore-template-loader",
+            }
+        ]
+    },
+});
+
 mix.js('resources/assets/js/laravel-bootstrap.js', 'public/js')
     .js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/fontawesome-all.js', 'public/js')

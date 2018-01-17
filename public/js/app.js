@@ -60,12 +60,15 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 48);
+/******/ 	return __webpack_require__(__webpack_require__.s = 50);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 3:
+/******/ ([
+/* 0 */,
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -93,16 +96,59 @@ module.exports = function(module) {
 
 
 /***/ }),
-
-/***/ 48:
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(49);
+module.exports = __webpack_require__(51);
 
 
 /***/ }),
-
-/***/ 49:
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -118,18 +164,29 @@ $.ajaxSetup({
   headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
 });
 
-__webpack_require__(50);
+_.templateSettings = {
+  interpolate: /\{\{=(.+?)\}\}/g,
+  evaluate: /\{\{(.+?)\}\}/g
+};
 
-__webpack_require__(51);
+window.App = {};
 
 __webpack_require__(52);
 
 __webpack_require__(53);
 
-// require('./file_event');
 __webpack_require__(54);
 
+// require('./FileList');
+
+// require('./file_event');
+// require('./FileList-events');
+
 __webpack_require__(55);
+
+// require('./FileShareSettings');
+
+__webpack_require__(56);
 
 // window.Vue = require('vue');
 
@@ -146,8 +203,7 @@ __webpack_require__(55);
 // });
 
 /***/ }),
-
-/***/ 50:
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3658,11 +3714,10 @@ function __guardMethod__(obj, methodName, transform) {
     return undefined;
   }
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
 
 /***/ }),
-
-/***/ 51:
+/* 53 */
 /***/ (function(module, exports) {
 
 var YourCloud = {
@@ -3688,8 +3743,7 @@ var YourCloud = {
 window.YourCloud = YourCloud;
 
 /***/ }),
-
-/***/ 52:
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3751,361 +3805,7 @@ window.dropzonejs_config = dropzonejs_config;
 window.enable_dropzonejs = enable_dropzonejs;
 
 /***/ }),
-
-/***/ 53:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var FileList = {
-    fileInputNameTemplate: '<div class="input-group">\n' + '                        <input type="text" class="form-control" placeholder="name">\n' + '                        <span class="input-group-btn">\n' + '                            <button class="btn btn-secondary" type="button" data-action="cancel">\n' + '                                <i class="fas fa-times"></i>\n' + '                            </button>\n' + '                            <button class="btn btn-secondary" type="button" data-action="save">\n' + '                                <i class="fas fa-check"></i>\n' + '                            </button>\n' + '                        </span>\n' + '                    </div>',
-
-    sort: function sort() {
-        var asc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-        var files = $('#file-list tbody tr[data-file-type="1"]');
-        var folders = $('#file-list tbody tr[data-file-type="0"]');
-        var fileContainer = '#file-list tbody';
-        var fileNameAttr = 'data-file-name';
-
-        var sortMultipler = asc ? 1 : -1;
-
-        folders.sort(function (a, b) {
-            return $(a).attr(fileNameAttr).localeCompare($(b).attr(fileNameAttr), {}, { numeric: true }) * sortMultipler;
-        }).appendTo(fileContainer);
-
-        files.sort(function (a, b) {
-            return $(a).attr(fileNameAttr).localeCompare($(b).attr(fileNameAttr), {}, { numeric: true }) * sortMultipler;
-        }).appendTo(fileContainer);
-
-        this.lastSort = asc;
-    },
-
-    lastSort: null,
-
-    sortToggle: function sortToggle() {
-        this.sort(this.lastSort * -1);
-    },
-
-    renameFile: function renameFile(fileIdOrFile) {
-        var file = void 0;
-        var inputFileName = $(FileList.fileInputNameTemplate);
-
-        if ((typeof fileIdOrFile === 'undefined' ? 'undefined' : _typeof(fileIdOrFile)) === 'object') {
-            file = fileIdOrFile;
-        } else {
-            file = $('#file-list tbody tr[data-file-id="' + fileIdOrFile + '"]');
-        }
-
-        inputFileName.find('input').val(file.data('file-name'));
-        file.toggleClass('active-static');
-
-        file.find('.file-name').html(inputFileName);
-
-        YourCloud.srollTo(file);
-    },
-
-    renameFileExec: function renameFileExec(event) {
-        // Is event on button
-        if ($(event.target).is('button') || $(event.target).parents('button').is('button')) {
-            var btn = $(event.target).is('button') ? $(event.target) : $(event.target).parents('button');
-            var file = $(btn.parents('tr'));
-            var newName = void 0;
-            var fileId = file.data('file-id');
-
-            if (btn.data('action') == 'save') {
-                newName = file.find('input').val();
-            } else {
-                newName = file.attr('data-file-name');
-                file.find('.file-name').html(newName);
-                file.removeClass('active-static');
-                return;
-            }
-
-            $.post(window.location.href, { rename_file: newName, file_id: fileId }).done(function (data) {
-                file.remove();
-                file = FileList.addFileToList(data).addClass('active');
-
-                YourCloud.srollTo(file);
-            }).fail(function (data) {
-                YourCloud.addAlert(data.responseJSON.error, 'warning');
-            });
-        }
-    },
-
-    addFileToList: function addFileToList(fileAttr) {
-        var newFile = $('#file-list tbody tr.yc-template').clone();
-        var fileContainer = '#file-list tbody';
-        var fileTemplateClass = 'yc-template';
-        var fileIcon = 'fa-file';
-        var folderIcon = 'fa-folder';
-
-        // Setting displayed folder size
-        if (fileAttr['type'] == 0) {
-            fileAttr['size_normalized'] = "-";
-        }
-
-        // File Name
-        newFile.find('.file-name').html(fileAttr['name']);
-        // File size
-        newFile.find('.file-size').html(fileAttr['size_normalized']);
-        // Last modify
-        newFile.find('.file-updated-at').html(fileAttr['updated_at']);
-
-        // Activate favorite button
-        if (fileAttr['favorite']) {
-            newFile.find('.favorite-btn').addClass('active');
-        }
-
-        // Setting file attrubutes
-        newFile.attr('data-file-id', fileAttr['id']);
-        newFile.attr('data-parent-id', fileAttr['parent_id']);
-        newFile.attr('data-file-type', fileAttr['type']);
-        newFile.attr('data-file-name', fileAttr['name']);
-        newFile.attr('data-file-size', fileAttr['size']);
-        newFile.attr('data-file-updated-at', fileAttr['updated_at']);
-
-        // Appendig to file container
-        newFile.appendTo(fileContainer);
-
-        // Setting file icon
-        if (fileAttr['type'] == '1') {
-            newFile.find('.file-icon [data-fa-processed]').first().addClass(fileIcon);
-        } else {
-            newFile.find('.file-icon [data-fa-processed]').first().addClass(folderIcon);
-        }
-
-        // Remove template class
-        newFile.removeClass(fileTemplateClass);
-
-        // Sorting files
-        FileList.sort();
-
-        return newFile;
-    },
-
-    createFile: function createFile() {
-        $.post(window.location.href, { new_file: "New File", file_content: '' }).done(function (data) {
-            var fileId = FileList.addFileToList(data).attr('data-file-id');
-
-            FileList.renameFile(fileId);
-        });
-    },
-
-    createFolder: function createFolder() {
-        $.post(window.location.href, { new_folder: "New Folder" }).done(function (data) {
-            var fileId = FileList.addFileToList(data).attr('data-file-id');
-
-            FileList.renameFile(fileId);
-        });
-    },
-
-    downloadFile: function downloadFile() {
-        var fileIdOrFile = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-        var selectedFiles = $('#file-list tbody tr.active');
-        var uri = '?';
-
-        if (selectedFiles.length > 0) {
-            var i = 0;
-
-            selectedFiles.each(function (el) {
-                uri += 'download_file[' + i + ']=' + $(this).data('file-id') + "&";
-                i++;
-            });
-        } else if (fileIdOrFile) {
-            var id = void 0;
-            if ((typeof fileIdOrFile === 'undefined' ? 'undefined' : _typeof(fileIdOrFile)) === 'object') {
-                id = $(fileIdOrFile).data('file-id');
-            } else {
-                id = fileIdOrFile;
-            }
-
-            uri = '?download_file=' + id;
-        }
-
-        window.location.href += uri;
-    },
-
-    deleteFile: function deleteFile(fileIdOrFile) {
-        var fileId = void 0;
-        var file = void 0;
-
-        if ((typeof fileIdOrFile === 'undefined' ? 'undefined' : _typeof(fileIdOrFile)) === 'object') {
-            fileId = $(fileIdOrFile).attr('data-file-id');
-            file = fileIdOrFile;
-        } else {
-            fileId = fileIdOrFile;
-            file = $('#file-list tbody tr[data-file-id="' + fileId + '"]');
-        }
-
-        $.post(window.location.href, { delete_file: fileId }).done(function (data) {
-            file.remove();
-        }).fail(function (data) {
-            YourCloud.addAlert(data.responseJSON.error, 'warning');
-        });
-    },
-
-    selectAllCheckbox: {
-        check: function check() {
-            var selectAllcheckobx = '#checkbox-select-all input';
-            $(selectAllcheckobx).prop('checked', true);
-        },
-
-        uncheck: function uncheck() {
-            var selectAllcheckobx = '#checkbox-select-all input';
-            $(selectAllcheckobx).prop('checked', false);
-        }
-    }
-};
-
-$("#file-list tbody").click(FileList.renameFileExec);
-
-window.FileList = FileList;
-
-FileList.sort();
-
-//  Quicksort
-// function partition(el, p, r) {
-//     var val = el.eq(p).attr('data-file-name');
-//     var i = p;
-//     var j = r;
-//     var b;
-//     var element;
-//     // alert();
-//     while(true) {
-//         while(el.eq(j).attr('data-file-name').localeCompare(val, {}, {numeric: true}) == 1) {
-//             // alert(el.eq(j).attr('data-file-name')+ '>' + val);
-//             // alert(j);
-//             j--;
-//         }
-//
-//         while(el.eq(i).attr('data-file-name').localeCompare(val, {}, {numeric: true}) == -1) {
-//             i++;
-//         }
-//
-//         if(i < j) {
-//             b = el.eq(i).attr('data-file-name');
-//             el.eq(i).attr('data-file-name', el.eq(j).attr('data-file-name'));
-//             el.eq(i).find('.file-name').html(el.eq(j).attr('data-file-name'));
-//             el.eq(j).attr('data-file-name', b);
-//             el.eq(j).find('.file-name').html(b);
-//
-//             i++;
-//             j--;
-//         }else {
-//             return j;
-//         }
-//     }
-// }
-//
-// function quicsort(el, p, r) {
-//     var q;
-//     if(p < r) {
-//         q = partition(el, p, r);
-//         quicsort(el, p, q);
-//         quicsort(el, q+1, r);
-//     }
-// }
-//
-// var el = $('#file-list tbody tr');
-// var p = el.first();
-// var r = el.last();
-
-// quicsort(el, 0, el.length-1);
-
-/***/ }),
-
-/***/ 54:
-/***/ (function(module, exports) {
-
-var FileListEvents = {
-    onFileClick: function onFileClick(event) {
-        el = $(event.target).parents('tr');
-
-        if (!el.hasClass('active-static')) {
-            if (el.hasClass('active')) {
-                FileList.selectAllCheckbox.uncheck();
-            }
-
-            el.toggleClass('active');
-        }
-
-        if (typeof el.data('click-time') === 'undefined') {
-            el.data('click-time', new Date().getTime());
-        } else if (el.data('click-time') >= new Date().getTime() - 350) {
-            // File action after duble click
-
-            if (el.data('file-type') == 1) {// File
-                // download_link = window.location.href + '?download_file=' + el.data("file-id");
-                // window.location.replace(download_link);
-            } else {
-                // Folder
-                // Remove get parameters
-                var link = window.location.href;
-                // let getParameters = link.substr(link.indexOf('?'));
-                link = link.substr(0, link.indexOf('?') < 1 ? link.length : link.indexOf('?'));
-
-                window.location.href = link + '/' + el.data('file-name');
-            }
-        } else {
-            el.data('click-time', new Date().getTime());
-        }
-    },
-
-    onFavoriteBtnClick: function onFavoriteBtnClick(event) {
-        event.stopPropagation();
-
-        var file = $(this).parents('tr');
-        var fileId = file.data('file-id');
-
-        if (!file.find('.favorite-btn').hasClass('active')) {
-            // Add to favorites
-            $.post(window.location.href, { add_favorite_file: fileId }).done(function (data) {
-                file.find('.favorite-btn').addClass('active');
-                file.find('.favorite-btn');
-            }).fail(function (data) {
-                YourCloud.addAlert(data.responseJSON.error, 'warning');
-            });
-        } else {
-            // Remove to favorites
-            $.post(window.location.href, { remove_favorite_file: fileId }).done(function (data) {
-                file.find('.favorite-btn').removeClass('active');
-
-                if ($('#left-menu [data-overlap="favorites"]').hasClass('active')) {
-                    file.remove();
-                }
-            }).fail(function (data) {
-                YourCloud.addAlert(data.responseJSON.error, 'warning');
-            });
-        }
-    }
-};
-
-FileList.selectAllCheckbox.onClick = function () {
-    var checkbox = $(this);
-
-    if (checkbox.prop('checked')) {
-        $('#file-list tbody tr').addClass('active');
-    } else {
-        $('#file-list tbody tr').removeClass('active');
-    }
-};
-
-FileList.events = FileListEvents;
-
-$('#file-list tbody').click(FileList.events.onFileClick);
-
-$('#file-list tbody .favorite-btn').click(FileList.events.onFavoriteBtnClick);
-
-$('#checkbox-select-all input').click(FileList.selectAllCheckbox.onClick);
-
-/***/ }),
-
-/***/ 55:
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4131,7 +3831,11 @@ var ContextMenu = {
         }
 
         var file = $(event.target).parents('tr');
-        var fileId = $(event.target).parents('tr').data('file-id');
+        var fileId = $(event.target).parents('tr').attr('data-file-id');
+
+        // Configuration specified by selected view
+        contextMenu.find('button[data-action="newFile"]').attr('disabled', !App.currentDirConfig.createFile);
+        contextMenu.find('button[data-action="newFolder"]').attr('disabled', !App.currentDirConfig.createFolder);
 
         if (typeof fileId !== 'undefined') {
             ContextMenu.fileId = fileId;
@@ -4141,6 +3845,7 @@ var ContextMenu = {
             contextMenu.find('button[data-action="rename"]').attr('disabled', false);
             contextMenu.find('button[data-action="tag"]').attr('disabled', false);
             contextMenu.find('button[data-action="deleteFile"]').attr('disabled', false);
+            contextMenu.find('button[data-action="share"]').attr('disabled', false);
         } else {
             ContextMenu.fileId = false;
             contextMenu.find('button[data-action="downloadFile"]').attr('disabled', true);
@@ -4148,6 +3853,7 @@ var ContextMenu = {
             contextMenu.find('button[data-action="rename"]').attr('disabled', true);
             contextMenu.find('button[data-action="tag"]').attr('disabled', true);
             contextMenu.find('button[data-action="deleteFile"]').attr('disabled', true);
+            contextMenu.find('button[data-action="share"]').attr('disabled', true);
         }
 
         // Tag submenu
@@ -4174,55 +3880,68 @@ var ContextMenu = {
 
     downloadFile: function downloadFile(contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
-        FileList.downloadFile(fileId);
+
+        App.files.get(fileId).downloadFile();
     },
 
     deleteFile: function deleteFile(contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
-        FileList.deleteFile(fileId);
+
+        App.files.get(fileId).destroy({
+            error: function error(model, response, options) {
+                YourCloud.addAlert(response.responseJSON.message, 'warning');
+                App.files.push(model);
+                App.files.render();
+            }
+        });
     },
 
     newFile: function newFile(contextMenuBtn, event) {
-        FileList.createFile();
+        var model = App.files.add({
+            type: 1,
+            name: 'New File',
+            size: '-',
+            updated_at: '-'
+        });
+
+        App.files.render();
+        model.trigger('showRenameField');
     },
 
     newFolder: function newFolder(contextMenuBtn, event) {
-        FileList.createFolder();
+        var model = App.files.add({
+            type: 0,
+            name: 'New Folder',
+            size: '-',
+            updated_at: '-'
+        });
+
+        App.files.render();
+        model.trigger('showRenameField');
     },
 
     rename: function rename(contextMenuBtn, event) {
         var fileId = $('#file-context-menu').data('file-id');
 
-        FileList.renameFile(fileId);
+        App.files.get(fileId).trigger('showRenameField');
     },
 
     tag: function tag(contextMenuBtn, event) {
         var tagId = $(contextMenuBtn).data('tag-id');
-        var file = $('#file-list tbody tr[data-file-id="' + this.fileId + '"]');
+        var file = App.files.get(this.fileId);
 
-        $.post(window.location.href, { tag_file: this.fileId, tag_id: tagId }).done(function (data) {
-            $('#tag-context-menu [data-tag-id]').removeClass('active');
+        if (file.attributes.tag_id == tagId) {
+            tagId = 0;
+        }
 
-            if (tagId == file.attr('data-tag-id')) {
-                // Removing tag
-                file.find('.file-icon .fa-circle').attr('data-tag-id', 'null');
-                file.find('.file-icon .fa-circle').data('tag-id', 'null');
-                tagId = 'null';
-            } else {
-                file.find('.file-icon .fa-circle').attr('data-tag-id', tagId);
-                file.find('.file-icon .fa-circle').data('tag-id', tagId);
-                $('#tag-context-menu [data-tag-id="' + tagId + '"]').addClass('active');
-            }
+        file.attributes.tag_id = tagId;
+        file.safeSave();
+        file.trigger('change');
+    },
 
-            if ($('#left-menu [data-overlap="tags"] li a.active').length > 0) {
-                file.remove();
-            }
-
-            file.attr('data-tag-id', tagId);
-            file.data('data-tag-id', tagId);
-        }).fail(function (data) {
-            YourCloud.addAlert(data.responseJSON.error, 'warning');
-        });
+    share: function share(contextMenuBtn, event) {
+        App.shareModalView.render(App.files.get(this.fileId));
+        App.shareModalView.show();
     }
 };
 
@@ -4234,6 +3953,610 @@ $('#content').on('contextmenu', ContextMenu.onOpen);
 
 $('#file-context-menu button').click(ContextMenu.selectOption);
 
-/***/ })
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/******/ });
+window.App = {
+    selectAllCheckbox: $('#checkbox-select-all input'),
+
+    currentDir: {},
+    currentDirConfig: {
+        id: 0,
+        apiUrl: 'files',
+        createFolder: false,
+        createFile: false,
+
+        fileCreating: function fileCreating() {
+            var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+            if (status == null) {
+                return this.createFile && this.createFolder;
+            }
+
+            this.createFile = status;
+            this.createFolder = status;
+        }
+    }
+
+    // Select All event
+};App.selectAllCheckbox.click(function (event) {
+    if ($(this).prop('checked')) {
+        $('#file-list tbody tr').addClass('active');
+    } else {
+        $('#file-list tbody tr').removeClass('active');
+    }
+});
+
+App.createBreadcrumb = function () {
+    var parents = App.currentDir.get('parents');
+    var template = $('<li class="breadcrumb-item"><a></a></li>');
+    var container = $('#breadcrumb ol').empty();
+
+    var currentView = $('#left-menu a.active').clone();
+    currentView.find('svg').remove();
+
+    // View item
+    template.clone().find('a').attr('href', currentView.attr('href')).html(currentView.html()).click(App.router.takeRederict).parent().appendTo(container);
+
+    $(parents).each(function (k, v) {
+        var item = template.clone();
+        item.find('a').attr('href', '/files?dirId=' + v.id).html(v.name).click(App.router.takeRederict);
+
+        container.append(item);
+    });
+
+    if (App.currentDir.get('name')) {
+        template.clone().find('a').html(App.currentDir.get('name')).click(App.router.takeRederict).parent().addClass('active').appendTo(container);
+    }
+};
+
+window.App.loadFolder = function (dirId) {
+    var urlRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'files';
+    var withUrlReplace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    var url = 'api/v1/' + urlRoot;
+
+    App.currentDir.apiUrl = url;
+    App.currentDir.id = dirId;
+
+    if (dirId != null) {
+        url += '/' + dirId;
+    } else {
+        dirId = 0;
+    }
+
+    App.currentDir = new App.FileModel({ id: dirId });
+    App.currentDir.fetch({
+        success: App.createBreadcrumb
+    });
+
+    var files = new App.FilesCollection();
+    files.urlRoot = url;
+
+    files.fetchAndRender();
+
+    url = document.createElement('a');
+    url.href = location.href;
+
+    if (withUrlReplace) {
+        window.App.router.navigate(url.pathname + '?dirId=' + dirId);
+    }
+};
+
+window.App.refreshFolder = function () {
+    App.loadFolder(App.currentDir.dirId, App.currentDir.apiUrl);
+};
+
+__webpack_require__(57);
+__webpack_require__(62);
+__webpack_require__(63);
+__webpack_require__(64);
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(58);
+
+var fileCallbacks = __webpack_require__(59);
+
+window.App.FileView = Backbone.View.extend({
+    tagName: 'tr',
+    parent: '#file-list tbody',
+    template: _.template(__webpack_require__(60)),
+    renameFieldTemplate: _.template(__webpack_require__(61)),
+
+    events: {
+        'click': fileCallbacks.click,
+        'dblclick': fileCallbacks.dblClick,
+        'click .favorite-btn': fileCallbacks.favoriteBtnClick,
+        'click .file-rename button[data-action="cancel"]': 'render',
+        'click .file-rename button[data-action="save"]': fileCallbacks.renameSave
+    },
+
+    initialize: function initialize() {
+        this.model.on('change', this.render, this);
+        this.model.on('remove', this.remove, this);
+        this.model.on('showRenameField', this.showRenameField, this);
+
+        return this;
+    },
+
+    render: function render() {
+        this.$el.removeClass();
+
+        this.$el.html(this.template(this.model.toJSON()));
+
+        this.setIcon();
+
+        this.setAttributes();
+
+        return this;
+    },
+
+    append: function append() {
+        var parent = $(this.parent);
+
+        parent.append(this.render().$el);
+
+        return this;
+    },
+
+    setIcon: function setIcon() {
+        var icon = '';
+
+        if (this.model.attributes.type == 0) {
+            icon = 'fa-folder';
+        } else {
+            icon = 'fa-file';
+        }
+
+        this.$el.find('.file-icon i').first().addClass(icon);
+
+        return this;
+    },
+
+    showRenameField: function showRenameField() {
+        this.$el.find('.file-name').html(this.renameFieldTemplate(this.model.toJSON()));
+        this.$el.addClass('active-static');
+
+        return this;
+    },
+
+    setAttributes: function setAttributes() {
+        this.$el.attr('data-tag-id', this.model.attributes.tag_id);
+        this.$el.attr('data-file-id', this.model.attributes.id);
+        this.$el.attr('data-file-type', this.model.attributes.type);
+        this.$el.attr('data-file-name', this.model.attributes.name);
+        this.$el.attr('data-favorite', this.model.attributes.favorite ? 'true' : 'false');
+        this.$el.attr('data-link-share', this.model.attributes.share_link ? 'true' : 'false');
+        if (this.model.attributes.share_users) {
+            this.$el.attr('data-user-share', this.model.attributes.share_users.length > 0 ? 'true' : 'false');
+        }
+
+        return this;
+    }
+
+});
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports) {
+
+var FileModel = Backbone.Model.extend({
+    urlRoot: '/api/v1/file',
+
+    safeSave: function safeSave() {
+        var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+        options.success = function (model, response, options) {
+            App.files.sortViews();
+
+            if (options.afterSuccess) {
+                options.afterSuccess(model, response, options);
+            }
+        };
+
+        options.error = function (model, response, options) {
+            YourCloud.addAlert(response.responseJSON['message'], 'warning');
+            model.fetch();
+
+            if (options.afterError) {
+                options.afterSuccess(model, response, options);
+            }
+        };
+
+        return this.save(attributes, options);
+    },
+
+    downloadFile: function downloadFile() {
+        location.replace('/download/' + this.attributes.id);
+    }
+});
+
+window.App.FileModel = FileModel;
+
+var createNewFile = function createNewFile() {
+    var newFile = new App.FileModel({ name: 'New File', parent_id: App.currentDirId, type: 1 });
+
+    if (newFile.safeSave().statusText == 'OK') {
+        App.files.push(newFile);
+    }
+};
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports) {
+
+module.exports = {
+    click: function click(event) {
+        var el = this.$el;
+
+        // Uncheck select All checkbox
+        if (!el.hasClass('active-static')) {
+            if (el.hasClass('active')) {
+                App.selectAllCheckbox.prop('checked', false);
+            }
+
+            el.toggleClass('active');
+        }
+    },
+
+    dblClick: function dblClick(event) {
+        if (this.model.attributes.type == 0) {
+            App.router.navigate('files?dirId=' + this.model.attributes.id, { trigger: true });
+        }
+    },
+
+    renameSave: function renameSave(event) {
+        var newName = this.$el.find('.file-rename input').val();
+
+        this.model.attributes.name = newName;
+        this.model.safeSave();
+    },
+
+    favoriteBtnClick: function favoriteBtnClick(event) {
+        event.stopPropagation();
+
+        if (this.model.attributes.favorite) {
+            this.model.attributes.favorite = 0;
+        } else {
+            this.model.attributes.favorite = 1;
+        }
+
+        this.model.safeSave();
+    }
+};
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports) {
+
+module.exports = "<td class=\"file-icon\">\n    <span class=\"fa-layers\" style=\"font-size: 25px\">\n        <i class=\"fas\"></i>\n        <i class=\"fas fa-circle\" data-fa-transform=\"shrink-10 up-5 left-7\" data-tag-id=\"null\"></i>\n    </span>\n</td>\n<td class=\"file-name\">{{= name }}</td>\n<td class=\"file-controls\">\n    <div>\n        <i class=\"fas fa-user share-user-icon\"></i>\n        <i class=\"fas fa-link share-link-icon\"></i>\n    </div>\n</td>\n<td class=\"favorite-btn\" role=\"button\"></td>\n<td class=\"file-size\">{{= size }}</td>\n<td class=\"file-updated-at\">{{= updated_at }}</td>";
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"input-group file-rename\">\n    <input type=\"text\" class=\"form-control\" placeholder=\"name\" value=\"{{= name }}\">\n    <span class=\"input-group-btn\">\n        <button class=\"btn btn-secondary\" type=\"button\" data-action=\"cancel\">\n            <i class=\"fas fa-times\"></i>\n        </button>\n        <button class=\"btn btn-secondary\" type=\"button\" data-action=\"save\">\n            <i class=\"fas fa-check\"></i>\n        </button>\n    </span>\n</div>";
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports) {
+
+window.App.FilesCollection = Backbone.Collection.extend({
+    model: App.FileModel,
+    urlRoot: '/api/v1/files',
+    views: null,
+    url: function url() {
+        var url = location.origin + '/' + this.urlRoot;
+
+        return url;
+    },
+
+    createViewsList: function createViewsList() {
+        var views = [];
+
+        this.each(function (file) {
+            views.push(new App.FileView({ model: file }));
+        });
+
+        return views;
+    },
+
+    render: function render() {
+        var refresh = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        if (refresh) {
+            this.each(function (model) {
+                model.trigger('remove');
+            });
+        }
+
+        $(this.createViewsList()).each(function (k, v) {
+            v.append();
+        });
+
+        this.sortViews();
+
+        return this;
+    },
+
+    fetchAndRender: function fetchAndRender() {
+        var that = this;
+        this.fetch({
+            success: function success() {
+                if (App.files) {
+                    App.files.remove(App.files.models);
+                }
+
+                that.render(false);
+
+                window.App.files = that;
+            },
+
+            error: function error() {
+                alert('Cant load files');
+            }
+        });
+
+        return this;
+    },
+
+    setParentId: function setParentId(id) {
+        this.parent_id = id;
+    },
+
+    sortViews: function sortViews() {
+        var asc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        var files = $('#file-list tbody tr[data-file-type="1"]');
+        var folders = $('#file-list tbody tr[data-file-type="0"]');
+        var fileContainer = '#file-list tbody';
+        var fileNameAttr = 'data-file-name';
+
+        var sortMultipler = asc ? 1 : -1;
+
+        folders.sort(function (a, b) {
+            return $(a).attr(fileNameAttr).localeCompare($(b).attr(fileNameAttr), {}, { numeric: true }) * sortMultipler;
+        }).appendTo(fileContainer);
+
+        files.sort(function (a, b) {
+            return $(a).attr(fileNameAttr).localeCompare($(b).attr(fileNameAttr), {}, { numeric: true }) * sortMultipler;
+        }).appendTo(fileContainer);
+
+        this.lastSort = asc;
+    }
+});
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports) {
+
+window.App.Router = Backbone.Router.extend({
+    routes: {
+        'files(?*query)': 'main',
+        'files/favorites(?*query)': 'favorites',
+        'files/tag/:id(?*query)': 'tag',
+        'files/sharedforme': 'shareForMe',
+        'files/sharedbyme': 'shareByMe'
+    },
+
+    getFromQuery: function getFromQuery(parameter, query) {
+        var parameterValue = null;
+
+        if (query == null) {
+            return parameterValue;
+        }
+
+        if (parameter.charAt(parameter.length - 1) != '=') {
+            parameter += '=';
+        }
+
+        var parameterPos = query.indexOf(parameter);
+
+        if (parameterPos > -1) {
+            var valueStart = parameterPos + parameter.length;
+
+            var valueEnd = query.indexOf('&', valueStart);
+            valueEnd = valueEnd < 1 ? query.length : valueEnd;
+
+            parameterValue = query.substr(valueStart, valueEnd);
+        }
+
+        return parameterValue;
+    },
+
+    takeRederict: function takeRederict(event) {
+        event.preventDefault();
+
+        App.router.navigate($(this).attr('href'), { trigger: true });
+    },
+
+    main: function main(query) {
+        var dirId = this.getFromQuery('dirId', query) || 0;
+
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files"]').addClass('active');
+
+        window.App.loadFolder(dirId, 'files');
+
+        App.currentDirConfig.fileCreating(true);
+    },
+
+    favorites: function favorites(query) {
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files/favorites"]').addClass('active');
+
+        window.App.loadFolder(null, 'files/favorites');
+
+        App.currentDirConfig.fileCreating(false);
+    },
+
+    tag: function tag(id, query) {
+        if (id == null) {
+            return this.main(query);
+        }
+
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files/tag/' + id + '"]').addClass('active');
+
+        window.App.loadFolder(null, 'files/tag/' + id);
+
+        App.currentDirConfig.fileCreating(false);
+    },
+
+    shareForMe: function shareForMe() {
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files/sharedforme"]').addClass('active');
+
+        window.App.loadFolder(null, 'files/shareforme');
+
+        App.currentDirConfig.fileCreating(false);
+    },
+
+    shareByMe: function shareByMe() {
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files/sharedbyme"]').addClass('active');
+
+        window.App.loadFolder(null, 'files/sharebyme');
+
+        App.currentDirConfig.fileCreating(false);
+    }
+});
+
+window.App.router = new App.Router();
+Backbone.history.start({ pushState: true });
+
+// Menu bindings
+$('#left-menu a').click(App.router.takeRederict);
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var ShareModalView = Backbone.View.extend({
+    model: false,
+    template: _.template(__webpack_require__(65)),
+    attributes: {
+        id: 'fileSharingModal',
+        class: 'modal fade'
+    },
+
+    events: {
+        'click button[data-action="cancel"]': 'hide',
+        'click td.remove-sharing': 'removeUser',
+        'click button[data-action="shareLinkToggle"]': 'shareLinkToggle',
+        'click button[data-action="findUser"]': 'findUser',
+        'click .users-list li': 'selectUser'
+
+    },
+
+    initialize: function initialize() {
+        this.$el.appendTo('body');
+    },
+
+    render: function render(model) {
+        this.model = model;
+
+        this.$el.html(this.template(this.model.toJSON()));
+
+        return this;
+    },
+
+    show: function show() {
+        var model = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        if (model != null) {
+            this.render(model);
+        }
+
+        this.$el.show().addClass('show');
+    },
+
+    hide: function hide() {
+        this.$el.hide().removeClass('show');
+    },
+
+    removeUser: function removeUser(event) {
+        var userId = $(event.target).parents('tr').attr('data-user-id');
+        var that = this;
+
+        $(this.model.attributes.share_users).each(function (k, v) {
+            if (v.id == userId) {
+                delete that.model.attributes.share_users[k];
+                return false;
+            }
+        });
+
+        this.model.safeSave();
+        this.render(this.model);
+    },
+
+    shareLinkToggle: function shareLinkToggle(event) {
+        if (!this.model.attributes.share_link) {
+            this.model.attributes.share_link = true;
+        } else {
+            this.model.attributes.share_link = false;
+        }
+
+        var that = this;
+        this.model.safeSave({}, {
+            afterSuccess: function afterSuccess() {
+                that.render(that.model);
+            }
+        });
+    },
+
+    findUser: function findUser(event) {
+        var userName = this.$el.find('input.user-search').val();
+        var usersList = this.$el.find('.users-list');
+
+        $.get('/api/v1/user/find/' + userName).done(function (response) {
+            usersList.find('ul').empty();
+
+            if (response.length > 0) {
+                usersList.show();
+
+                $(response).each(function (k, v) {
+                    $('<li>').html(v.name).attr('data-user-id', v.id).appendTo(usersList.find('ul'));
+                });
+            } else {
+                usersList.hide();
+            }
+        }).fail(function (response) {
+            YourCloud.addAlert(response.responseJSON.message, 'warning');
+        });
+    },
+
+    selectUser: function selectUser(event) {
+        var userId = $(event.target).attr('data-user-id');
+        var userName = $(event.target).html();
+        this.$el.find('.users-list').hide();
+
+        this.model.attributes.share_users.push({
+            name: userName,
+            id: userId
+        });
+
+        var that = this;
+        this.model.safeSave({}, {
+            afterSuccess: function afterSuccess() {
+                that.render(that.model);
+            }
+        });
+    }
+});
+
+window.App.shareModalView = new ShareModalView();
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n        <div class=\"modal-header\">\n            <h5 class=\"modal-title\">Sharing settings</h5>\n            <button type=\"button\" class=\"close\" data-action=\"cancel\">\n                <span aria-hidden=\"true\">&times;</span>\n            </button>\n        </div>\n        <div class=\"modal-body\">\n            <h5>Sharing by link</h5>\n            <div class=\"input-group share-link\">\n                <input class=\"form-control\" type=\"text\" readonly placeholder=\"Use button to create link\" value=\"{{= share_link? location.origin + '/download/share/' + share_link : '' }}\">\n                <span class=\"input-group-btn\">\n                    <button class=\"btn btn-success\" type=\"button\" data-action=\"shareLinkToggle\">\n                        <i class=\"fas fa-times\"></i>\n                    </button>\n                </span>\n            </div>\n            <hr>\n\n            <h5>Sharing for user</h5>\n            <div class=\"input-group share-for-user\">\n                <input class=\"form-control user-search\" type=\"text\" placeholder=\"Nickname\">\n                <span class=\"input-group-btn\">\n                    <button class=\"btn btn-primary\" type=\"button\" data-action=\"findUser\">\n                        <i class=\"fas fa-search\"></i>\n                    </button>\n                </span>\n                <div class=\"users-list\">\n                    <ul>\n                        <li>User1</li>\n                        <li>User2</li>\n                    </ul>\n                </div>\n            </div>\n\n            <table class=\"table table-hover mt-3 shared-users\">\n                <thead>\n                    <tr>\n                        <th scope=\"col\">Nickname</th>\n                        <th scope=\"col\" class=\"w-25 text-center\">Remove</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    {{ _.each(share_users, function(user) { }}\n                    {{ if(! user) return; }}\n                    <tr data-user-id=\"{{= user.id }}\">\n                        <td class=\"user-name\">{{= user.name }}</td>\n                        <td class=\"remove-sharing text-center\" role=\"button\">\n                            <i class=\"fas fa-unlink\"></i>\n                        </td>\n                    </tr>\n                    {{ }); }}\n                </tbody>\n            </table>\n        </div>\n        <div class=\"modal-footer\">\n            <button type=\"button\" class=\"btn btn-primary\" data-action=\"cancel\">Close</button>\n        </div>\n    </div>\n</div>";
+
+/***/ })
+/******/ ]);

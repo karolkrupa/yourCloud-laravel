@@ -1,6 +1,3 @@
-
-
-
 .files-list {
   th, td {
     vertical-align: middle !important;
@@ -10,51 +7,75 @@
     tr {
       cursor: pointer;
 
-      .file-icon {
-        svg[data-tag-id='null'] {
-          visibility: hidden;
-        }
+      .file-controls {
+        color: $text-color-alt;
 
-        svg[data-tag-id='1'] {
-          @extend .text-primary;
-        }
-
-        svg[data-tag-id='2'] {
-          @extend .text-success;
-        }
-
-        svg[data-tag-id='3'] {
-          @extend .text-danger;
-        }
-
-        svg[data-tag-id='4'] {
-          @extend .text-warning;
-        }
-
-        svg[data-tag-id='5'] {
-          @extend .text-info;
+        svg {
+          display: none;
         }
       }
 
-      //.tag-1 {
-      //  @extend .text-primary;
-      //}
+      &[data-link-share='true'] .file-controls .share-link-icon {
+        display: inline-block;
+      }
+
+      &[data-user-share='true'] .file-controls .share-user-icon {
+        display: inline-block;
+      }
+
+      & .file-icon svg.fa-circle {
+        visibility: hidden;
+      }
+      &[data-tag-id='1'] .file-icon svg.fa-circle {
+        @extend .text-primary;
+        visibility: visible;
+      }
+      &[data-tag-id='2'] .file-icon svg.fa-circle {
+        @extend .text-success;
+        visibility: visible;
+      }
+      &[data-tag-id='3'] .file-icon svg.fa-circle {
+        @extend .text-danger;
+        visibility: visible;
+      }
+      &[data-tag-id='4'] .file-icon svg.fa-circle {
+        @extend .text-warning;
+        visibility: visible;
+      }
+      &[data-tag-id='5'] .file-icon svg.fa-circle {
+        @extend .text-info;
+        visibility: visible;
+      }
+
+      //.file-icon {
+      //  svg[data-tag-id='null'] {
+      //    visibility: hidden;
+      //  }
       //
-      //.tag-2 {
-      //  @extend .text-success;
-      //}
+      //  svg[data-tag-id='1'] {
+      //    @extend .text-primary;
+      //  }
       //
-      //.tag-3 {
-      //  @extend .text-danger;
-      //}
+      //  svg[data-tag-id='2'] {
+      //    @extend .text-success;
+      //  }
       //
-      //.tag-4 {
-      //  @extend .text-warning;
-      //}
+      //  svg[data-tag-id='3'] {
+      //    @extend .text-danger;
+      //  }
       //
-      //.tag-5 {
-      //  @extend .text-info;
+      //  svg[data-tag-id='4'] {
+      //    @extend .text-warning;
+      //  }
+      //
+      //  svg[data-tag-id='5'] {
+      //    @extend .text-info;
+      //  }
       //}
+
+      &[data-favorite='true'] .favorite-btn {
+        color: $text-color-alt;
+      }
 
       td.favorite-btn {
 
@@ -112,4 +133,16 @@
 #breadcrumb .breadcrumb {
   background-color: $secondary-color;
   border-radius: 0;
+}
+
+#fileSharingModal {
+  .remove-sharing {
+    svg {
+      cursor: pointer;
+
+      &:hover {
+        color: $text-color-alt;
+      }
+    }
+  }
 }

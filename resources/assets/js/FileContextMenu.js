@@ -19,7 +19,11 @@ let ContextMenu = {
         }
 
         let file = $(event.target).parents('tr');
-        let fileId = $(event.target).parents('tr').data('file-id');
+        let fileId = $(event.target).parents('tr').attr('data-file-id');
+
+        // Configuration specified by selected view
+        contextMenu.find('button[data-action="newFile"]').attr('disabled', !App.currentDirConfig.createFile);
+        contextMenu.find('button[data-action="newFolder"]').attr('disabled', !App.currentDirConfig.createFolder);
 
         if(typeof  fileId !== 'undefined') {
             ContextMenu.fileId = fileId;
@@ -29,6 +33,7 @@ let ContextMenu = {
             contextMenu.find('button[data-action="rename"]').attr('disabled', false);
             contextMenu.find('button[data-action="tag"]').attr('disabled', false);
             contextMenu.find('button[data-action="deleteFile"]').attr('disabled', false);
+            contextMenu.find('button[data-action="share"]').attr('disabled', false);
         }else {
             ContextMenu.fileId = false;
             contextMenu.find('button[data-action="downloadFile"]').attr('disabled', true);
@@ -36,6 +41,7 @@ let ContextMenu = {
             contextMenu.find('button[data-action="rename"]').attr('disabled', true);
             contextMenu.find('button[data-action="tag"]').attr('disabled', true);
             contextMenu.find('button[data-action="deleteFile"]').attr('disabled', true);
+            contextMenu.find('button[data-action="share"]').attr('disabled', true);
         }
 
         // Tag submenu
@@ -62,54 +68,69 @@ let ContextMenu = {
 
     downloadFile: function (contextMenuBtn, event) {
         let fileId = $('#file-context-menu').data('file-id');
-        FileList.downloadFile(fileId)
+    
+        App.files.get(fileId).downloadFile();
     },
 
     deleteFile: function (contextMenuBtn, event) {
         let fileId = $('#file-context-menu').data('file-id');
-        FileList.deleteFile(fileId);
+        
+
+        App.files.get(fileId).destroy({
+            error: function(model, response, options) {
+                YourCloud.addAlert(response.responseJSON.message, 'warning');
+                App.files.push(model);
+                App.files.render();
+            }
+        });
     },
 
     newFile: function(contextMenuBtn, event) {
-        FileList.createFile();
+        let model = App.files.add({
+            type: 1,
+            name: 'New File',
+            size: '-',
+            updated_at: '-',
+        });
+
+        App.files.render();
+        model.trigger('showRenameField');
     },
 
     newFolder: function(contextMenuBtn, event) {
-        FileList.createFolder();
+        let model = App.files.add({
+            type: 0,
+            name: 'New Folder',
+            size: '-',
+            updated_at: '-',
+        });
+
+        App.files.render();
+        model.trigger('showRenameField');
     },
 
     rename: function (contextMenuBtn, event) {
         let fileId = $('#file-context-menu').data('file-id');
 
-        FileList.renameFile(fileId);
+        App.files.get(fileId).trigger('showRenameField');
     },
 
     tag: function (contextMenuBtn, event) {
         let tagId = $(contextMenuBtn).data('tag-id');
-        let file = $('#file-list tbody tr[data-file-id="'+ this.fileId +'"]');
+        let file = App.files.get(this.fileId);
 
-        $.post(window.location.href, {tag_file: this.fileId, tag_id: tagId}).done(function (data) {
-            $('#tag-context-menu [data-tag-id]').removeClass('active');
+        if(file.attributes.tag_id == tagId) {
+            tagId = 0;
+        }
 
-            if(tagId == file.attr('data-tag-id')) { // Removing tag
-                file.find('.file-icon .fa-circle').attr('data-tag-id', 'null');
-                file.find('.file-icon .fa-circle').data('tag-id', 'null');
-                tagId = 'null';
-            }else {
-                file.find('.file-icon .fa-circle').attr('data-tag-id', tagId);
-                file.find('.file-icon .fa-circle').data('tag-id', tagId);
-                $('#tag-context-menu [data-tag-id="'+ tagId +'"]').addClass('active');
-            }
-
-            if($('#left-menu [data-overlap="tags"] li a.active').length > 0) {
-                file.remove();
-            }
-
-            file.attr('data-tag-id', tagId);
-            file.data('data-tag-id', tagId);
-        }).fail(function (data) {
-            YourCloud.addAlert(data.responseJSON.error, 'warning');
-        });
+        file.attributes.tag_id = tagId;
+        file.safeSave();
+        file.trigger('change');
+    },
+    
+    share: function (contextMenuBtn, event) {
+        App.shareModalView.render(App.files.get(this.fileId));
+        App.shareModalView.show();
     }
 };
 

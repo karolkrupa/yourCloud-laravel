@@ -12,20 +12,20 @@
 @endsection
 
 @section('left-menu')
-    <a data-overlap="main" href="/" class="btn {{ ($overlap == 'main')? 'active' : '' }}"><i class="far fa-folder"></i>{{ Auth::user()->name }}</a>
-    <a data-overlap="favorites" href="{{ URL::to(Auth::user()->name) . '?overlap=favorites' }}" class="btn {{ ($overlap == 'favorites')? 'active' : '' }}"><i class="fas fa-star"></i>Favorites</a>
+    <a data-overlap="main" href="/files" class="btn"><i class="far fa-folder"></i>main</a>
+    <a data-overlap="favorites" href="/files/favorites" class="btn"><i class="fas fa-star"></i>Favorites</a>
     <div data-overlap="tags" class="btn">
         <i class="fas fa-circle"></i>Tags
         <ul>
-            <li data-tag-id="1"><a href="{{ URL::to(Auth::user()->name) . '?overlap=tag&tag_id=1' }}" class="text-primary {{ ($overlap == 'tag-1')? 'active' : '' }}"><i class="fas fa-circle"></i>Blue</a></li>
-            <li data-tag-id="2"><a href="{{ URL::to(Auth::user()->name) . '?overlap=tag&tag_id=2' }}" class="text-success {{ ($overlap == 'tag-2')? 'active' : '' }}"><i class="fas fa-circle"></i>Green</a></li>
-            <li data-tag-id="3"><a href="{{ URL::to(Auth::user()->name) . '?overlap=tag&tag_id=3' }}" class="text-danger {{ ($overlap == 'tag-3')? 'active' : '' }}"><i class="fas fa-circle"></i>Red</a></li>
-            <li data-tag-id="4"><a href="{{ URL::to(Auth::user()->name) . '?overlap=tag&tag_id=4' }}" class="text-warning {{ ($overlap == 'tag-4')? 'active' : '' }}"><i class="fas fa-circle"></i>Yellow</a></li>
-            <li data-tag-id="5"><a href="{{ URL::to(Auth::user()->name) . '?overlap=tag&tag_id=5' }}" class="text-info {{ ($overlap == 'tag-5')? 'active' : '' }}"><i class="fas fa-circle"></i>Azure</a></li>
+            <li data-tag-id="1"><a href="/files/tag/1" class="text-primary"><i class="fas fa-circle"></i>Blue</a></li>
+            <li data-tag-id="2"><a href="/files/tag/2" class="text-success"><i class="fas fa-circle"></i>Green</a></li>
+            <li data-tag-id="3"><a href="/files/tag/3" class="text-danger"><i class="fas fa-circle"></i>Red</a></li>
+            <li data-tag-id="4"><a href="/files/tag/4" class="text-warning"><i class="fas fa-circle"></i>Yellow</a></li>
+            <li data-tag-id="5"><a href="/files/tag/5" class="text-info"><i class="fas fa-circle"></i>Azure</a></li>
         </ul>
     </div>
-    <a data-overlap="shared_for_me" href="" class="btn"><i class="fas fa-share-alt-square"></i>Shared for me</a>
-    <a data-overlap="shared_by_me" href="" class="btn"><i class="fas fa-share-alt-square"></i>Shared by me</a>
+    <a data-overlap="shared_for_me" href="/files/sharedforme" class="btn"><i class="fas fa-share-alt-square"></i>Shared for me</a>
+    <a data-overlap="shared_by_me" href="/files/sharedbyme" class="btn"><i class="fas fa-share-alt-square"></i>Shared by me</a>
 @endsection
 
 @section('navbar-right')
@@ -74,17 +74,7 @@
         <div class="col-12 p-0">
             <nav aria-label="breadcrumb" role="navigation" id="breadcrumb">
                 <ol class="breadcrumb mb-0">
-                    @foreach($path as $folder)
-                        <?php $path_url .= '/' . $folder; ?>
 
-                        @if ($loop->last)
-                                <li class="breadcrumb-item active">{{ urldecode($folder) }}</li>
-                        @else
-                                <li class="breadcrumb-item"><a href="#"><a href="{{ URL::to($path_url) }}">{{ urldecode($folder) }}</a></a></li>
-                        @endif
-                    @endforeach
-                    {{--<li class="breadcrumb-item"><a href="#">Home</a></li>--}}
-                    {{--<li class="breadcrumb-item active" aria-current="page">Library</li>--}}
                 </ol>
             </nav>
         </div>
@@ -96,63 +86,14 @@
                         <input type="checkbox">
                     </th>
                     <th scope="col">File name</th>
-                    <th style="width: 1rem"></th>
+                    <th scope="col" style="width: 4rem"></th>
+                    <th scope="col" style="width: 1rem"></th>
                     <th scope="col" style="width: 150px">Size</th>
                     <th scope="col" style="width: 150px">Last modify</th>
                 </tr>
             </thead>
             <tbody>
-            @foreach($files as $file)
-                @component('components.file', ['data' => $file]) @endcomponent
-            @endforeach
-            <tr class="yc-template"
-                    data-file-id="id"
-                    data-file-parent-id="id"
-                    data-file-type="1/2"
-                    data-file-name="name"
-                    data-file-size="size"
-                    data-file-updated-at="date"
-                    data-tag-id="null"
-            >
-                <!-- fa-folder/fa-file -->
-                {{--<td class="file-icon"><i class="fas" style="font-size: 25px"></i></td>--}}
-                <td class="file-icon">
-                    <span class="fa-layers" style="font-size: 25px">
-                        <i class="fas"></i>
-                        <i class="fas fa-circle" data-fa-transform="shrink-10 up-5 left-7" data-tag-id="null"></i>
-                    </span>
-                </td>
-                <td class="file-name">name</td>
-                <td class="favorite-btn" role="button"></td>
-                <td class="file-size">size</td>
-                <td class="file-updated-at">date</td>
-            </tr>
-            {{--<tr class=""--}}
-                {{--data-file-id="id"--}}
-                {{--data-file-parent-id="id"--}}
-                {{--data-file-type="1/2"--}}
-                {{--data-file-name="name"--}}
-                {{--data-file-size="size"--}}
-                {{--data-file-updated-at="date"--}}
-            {{-->--}}
-                {{--<!-- fa-folder/fa-file -->--}}
-                {{--<td><i class="fas" style="font-size: 25px"></i></td>--}}
-                {{--<td class="file-name">--}}
-                    {{--<div class="input-group">--}}
-                                               {{--<input type="text" class="form-control" placeholder="name">--}}
-                        {{--<span class="input-group-btn">--}}
-                         {{--<button class="btn btn-secondary" type="button" data-action="cancel">--}}
-                             {{--<i class="fas fa-times"></i>--}}
-                                {{--</button>--}}
-                              {{--<button class="btn btn-secondary" type="button" data-action="save">--}}
-                                   {{--<i class="fas fa-check"></i>--}}
-                               {{--</button>--}}
-                           {{--</span>--}}
-                                            {{--</div>--}}
-                {{--</td>--}}
-                {{--<td class="file-size">size</td>--}}
-                {{--<td class="file-updated-at">date</td>--}}
-            {{--</tr>--}}
+                <!-- File list -->
             </tbody>
         </table>
     </div>
@@ -161,8 +102,7 @@
         <div class="list-group">
             <button data-action="newFolder" type="button" class="list-group-item list-group-item-action"><i class="fas fa-folder"></i>New Folder</button>
             <button data-action="newFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-file-alt"></i>New File</button>
-            {{--<button data-action="copy" type="button" class="list-group-item list-group-item-action"><i class="fas fa-copy"></i>Copy</button>--}}
-            {{--<button data-action="copy" type="button" class="list-group-item list-group-item-action"><i class="fas fa-paste"></i>Paste</button>--}}
+            <button data-action="share" type="button" class="list-group-item list-group-item-action"><i class="fas fa-share-alt"></i>Share</button>
             <div id="tag-context-menu">
                 <button data-action="tag" type="button" class="list-group-item list-group-item-action"><i class="fas fa-star"></i>Tag</button>
                 <div class="list-group">

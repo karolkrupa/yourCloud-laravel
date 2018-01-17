@@ -22,7 +22,10 @@ class CreateFilesTable extends Migration
             $table->string('path', 255)->nullable();
             $table->string('mime_type', 255);
             $table->integer('size');
+            $table->char('share_link', 32)->nullable();
             $table->timestamps();
+
+            $table->unique(['name', 'parent_id', 'users_id']);
 
             $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade');
         });

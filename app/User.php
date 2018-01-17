@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -11,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  */
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -37,8 +38,25 @@ class User extends Authenticatable
      * @return mixed
      */
     public function files() {
-        return $this->belongsToMany('App\File', 'users_files', 'users_id', 'files_id')
-            ->withPivot(['favorite', 'permissions', 'tag_id'])
-            ->pivot();
+        return $this->hasMany(File::class, 'users_id');
+    }
+
+    public function filesSharedForMe() {
+        return $this->belongsToMany('App\File', 'shared_files', 'shared_for', 'files_id')
+            ->where('shared_files.owner_id', '<>', $this->id);
+    }
+
+    public function filesSharedByMe() {
+        return $this->belongsToMany('App\File', 'shared_files', 'owner_id', 'files_id')
+            ->where('shared_files.owner_id', $this->id);
+    }
+
+    public function taggedFiles() {
+        return $this->belongsToMany('App\File', 'file_tags', 'users_id', 'files_id')
+            ->withPivot(['tag_id']);
+    }
+
+    public function favoriteFiles() {
+        return $this->belongsToMany('App\File', 'favorite_files', 'users_id', 'files_id');
     }
 }

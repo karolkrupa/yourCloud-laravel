@@ -14,6 +14,13 @@ try {
     require('bootstrap/js/src/index');
 } catch (e) {}
 
+
+try {
+    require('underscore');
+
+    require('backbone');
+} catch (e) {}
+
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the

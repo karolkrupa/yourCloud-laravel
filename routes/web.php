@@ -14,9 +14,14 @@
 
 Auth::routes();
 
-Route::get('/', function () {
-    return redirect('/' . Auth::user()->name);
-})->middleware('auth');
+Route::get('/', function() {
+    return rederict('/files');
+});
+
+Route::get('/download/{id}', 'Api\FileController@authSend');
+Route::get('/download/share/{id}', 'Api\FileController@sharedSend');
+
+Route::get('/files/{path?}', 'MainController@index')->where('path', '(.*)');
 
 
 Route::get('/logout', function () {
@@ -24,6 +29,8 @@ Route::get('/logout', function () {
     return "Wylogowany";
 });
 
-Route::any('{user_name}/{path?}', 'ResourceController@route')
-    ->where('path', '(.*)')
-    ->middleware('auth');
+
+
+
+
+

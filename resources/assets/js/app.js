@@ -13,21 +13,29 @@ $.ajaxSetup({
         { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
 });
 
+_.templateSettings = {
+    interpolate: /\{\{=(.+?)\}\}/g,
+    evaluate: /\{\{(.+?)\}\}/g,
+};
+
+window.App = {};
+
 require('./dropzone');
 
 require('./yourCloud');
 
 require('./dropzone_config');
 
-require('./FileList');
+// require('./FileList');
 
 // require('./file_event');
-require('./FileList-events');
+// require('./FileList-events');
 
 require('./FileContextMenu');
 
+// require('./FileShareSettings');
 
-
+require('./folder_view/app');
 
 
 // window.Vue = require('vue');
