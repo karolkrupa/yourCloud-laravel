@@ -23,6 +23,9 @@ module.exports = {
 
         this.model.attributes.name = newName;
         this.model.safeSave();
+        
+        this.$el.removeClass('active-static');
+        this.$el.addClass('active');
     },
 
     favoriteBtnClick: function(event) {

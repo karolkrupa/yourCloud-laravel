@@ -1,6 +1,6 @@
 'use strict';
 
-let dropzonejs_config = {
+window.dropzonejs_config = {
     url: window.location.href,
     parallelUploads: 1,
     previewsContainer: '#dropzonejs-container',
@@ -45,10 +45,10 @@ let dropzonejs_config = {
     },
 };
 
-let enable_dropzonejs = function(container = '#content') {
+window.enable_dropzonejs = function(container = '#content') {
     $(container).dropzone(dropzonejs_config);
 };
 
-window.dropzonejs_config = dropzonejs_config;
+// window.dropzonejs_config = dropzonejs_config;
 
-window.enable_dropzonejs = enable_dropzonejs;
+// window.enable_dropzonejs = enable_dropzonejs;

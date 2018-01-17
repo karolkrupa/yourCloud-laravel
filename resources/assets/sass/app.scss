@@ -8,43 +8,16 @@
   // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
-@import "dropzonejs-file";
 
-.yc-template {
-  display: none;
-}
+///////////////////////////
+// YourCloud CSS section //
+///////////////////////////
 
+// Global CSS
+@import "global";
 
+// Layout CSS
+@import "layout/loader";
 
-html {
-  font-family: "Raleway", sans-serif;
-  font-size: 14px;
-}
-
-#container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  //background: $primary-color;
-
-  & > .row {
-    height: 100%;
-  }
-}
-
-#content {
-  min-height: calc(100% - 45px);
-  background-color: $background-color;
-}
-
-@import "alerts-container";
-
-@import "_navbar";
-
-@import "_left_menu";
-
-@import "file_context_menu";
-
-@import "folder_page";
-
-@import "shareModalView";
+// Folder page layout CSS
+@import "folder_page/loader";

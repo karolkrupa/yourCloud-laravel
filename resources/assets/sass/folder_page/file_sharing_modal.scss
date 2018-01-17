@@ -1,0 +1,11 @@
+#fileSharingModal {
+  .remove-sharing {
+    svg {
+      cursor: pointer;
+  
+      &:hover {
+        color: $text-color-alt;
+      }
+    }
+  }
+}

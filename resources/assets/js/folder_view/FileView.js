@@ -4,6 +4,9 @@ let fileCallbacks = require('./FileEvents');
 
 
 window.App.FileView = Backbone.View.extend({
+    attributes: {
+        role: 'link',
+    },
     tagName: 'tr',
     parent: '#file-list tbody',
     template: _.template(require('./templates/FileView/FileView.html')),
@@ -12,7 +15,7 @@ window.App.FileView = Backbone.View.extend({
     events: {
         'click': fileCallbacks.click,
         'dblclick': fileCallbacks.dblClick,
-        'click .favorite-btn': fileCallbacks.favoriteBtnClick,
+        'click .favorite-btn button': fileCallbacks.favoriteBtnClick,
         'click .file-rename button[data-action="cancel"]': 'render',
         'click .file-rename button[data-action="save"]': fileCallbacks.renameSave,
     },
@@ -26,8 +29,6 @@ window.App.FileView = Backbone.View.extend({
     },
 
     render: function() {
-        this.$el.removeClass();
-        
         this.$el.html(this.template(this.model.toJSON()));
 
         this.setIcon();

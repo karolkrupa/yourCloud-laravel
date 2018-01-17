@@ -1,0 +1,22 @@
+.files-list {
+  tbody {
+    tr {
+      .file-controls {
+        color: $text-color-alt;
+  
+        svg {
+          display: none;
+        }
+      }
+  
+      &[data-link-share='true'] .file-controls .share-link-icon {
+        display: inline-block;
+      }
+  
+      &[data-user-share='true'] .file-controls .share-user-icon {
+        display: inline-block;
+      }
+
+    }
+  }
+}

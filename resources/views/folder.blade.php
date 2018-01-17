@@ -98,6 +98,7 @@
         </table>
     </div>
 
+
     <div id="file-context-menu">
         <div class="list-group">
             <button data-action="newFolder" type="button" class="list-group-item list-group-item-action"><i class="fas fa-folder"></i>New Folder</button>
@@ -118,8 +119,8 @@
             <button data-action="deleteFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-trash-alt"></i>Delete</button>
             <button data-action="downloadFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-download"></i>Download</button>
         </div>
-
     </div>
+
 
     {{--<div id="dropzone-template" >--}}
         {{--<div class="" style="visibility: hidden">--}}
@@ -140,14 +141,5 @@
 
     <script>
         enable_dropzonejs();
-
-        // $('.alert').alert('close');
-
-        // $('#file-list').dataTable({
-        //     paging: false,
-        //     searching: false,
-        //     scrollY: 400,
-        //     autoWidth: true,
-        // });
     </script>
 @endsection

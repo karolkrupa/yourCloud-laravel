@@ -109,7 +109,7 @@ class FilesController extends Controller
             ->get();
 
             foreach($files as $file) {
-                $extededFiles = $file->getExtendedInfo();
+                $extededFiles[] = $file->getExtendedInfo();
             }
 
             if($files) {

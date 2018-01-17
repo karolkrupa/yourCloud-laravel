@@ -29,7 +29,6 @@
 
   .list-group {
     border-radius: 0;
-    //border: 1px solid $primary-color;
     font-size: .9rem;
 
     button {
@@ -48,7 +47,6 @@
 
       &:hover {
         background-color: lighten($text-color, 16);
-        //color: white;
       }
 
       &.active {

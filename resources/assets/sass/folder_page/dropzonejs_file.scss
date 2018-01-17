@@ -1,11 +1,7 @@
 .dropzonejs-file-container {
   &:hover .dropzonejs-layout-hover {
-    visibility: visible;
+		visibility: visible;
   }
-}
-
-.dropzonejs-layout {
-
 }
 
 .dropzonejs-layout-hover {
@@ -22,7 +18,7 @@
   cursor: pointer;
 
   &:hover {
-    visibility: visible;
+		visibility: visible;
   }
 }
 

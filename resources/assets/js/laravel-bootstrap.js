@@ -16,7 +16,7 @@ try {
 
 
 try {
-    require('underscore');
+    window._ = require('underscore');
 
     require('backbone');
 } catch (e) {}

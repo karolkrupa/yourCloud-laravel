@@ -23,7 +23,9 @@ require('./yourCloud');
 
 require('./dropzone_config');
 
+require('./folder_view/app');
+
 require('./FileContextMenu');
 
-require('./folder_view/app');
+
 

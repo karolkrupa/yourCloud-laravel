@@ -1,0 +1,34 @@
+.files-list {
+    tbody {
+      tr {
+        .file-icon svg.fa-circle {
+          visibility: hidden;
+        }
+  
+        &[data-tag-id='1'] .file-icon svg.fa-circle {
+          @extend .text-primary;
+          visibility: visible;
+        }
+  
+        &[data-tag-id='2'] .file-icon svg.fa-circle {
+          @extend .text-success;
+          visibility: visible;
+        }
+  
+        &[data-tag-id='3'] .file-icon svg.fa-circle {
+          @extend .text-danger;
+          visibility: visible;
+        }
+  
+        &[data-tag-id='4'] .file-icon svg.fa-circle {
+          @extend .text-warning;
+          visibility: visible;
+        }
+        
+        &[data-tag-id='5'] .file-icon svg.fa-circle {
+          @extend .text-info;
+          visibility: visible;
+        }
+    }
+  }
+}
