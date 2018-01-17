@@ -1,7 +1,7 @@
 yourCloud
 =========
 
-A simple system for storing files in the cloud like OneDrive or OwnCloud based on the Laravel framework.
+A simple system for storing files in the cloud like OneDrive or OwnCloud based on the Laravel framework with Backbone.js.
 
 ## Installation
 1. Copy file `.env.example` as `.env`
