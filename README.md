@@ -3,7 +3,7 @@ yourCloud
 
 A simple system for storing files in the cloud like OneDrive or OwnCloud based on the Laravel framework.
 
-## Instalation
+## Installation
 1. Copy file `.env.example` as `.env`
 2. Configure your `.env` file. (database section)
 3. Run command `php artisan key:generate` in project root directory
