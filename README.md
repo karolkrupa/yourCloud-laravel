@@ -7,6 +7,7 @@ A simple system for storing files in the cloud like OneDrive or OwnCloud based o
 1. Copy file `.env.example` as `.env`
 2. Configure your `.env` file. (database section)
 3. Run command `php artisan key:generate` in project root directory
+3. Run command `php artisan passport:install` in project root directory
 4. Run `php artisan migrate` command
 5. Configure your web server for `public` directory
 

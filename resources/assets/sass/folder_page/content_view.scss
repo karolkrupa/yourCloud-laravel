@@ -6,3 +6,15 @@
     background-color: $secondary-color;
     border-radius: 0;
 }
+
+.cell-one-row {
+    width: 1%;
+    white-space: nowrap;
+    text-align: center;
+}
+
+#file-list[data-files-count='0'] {
+    #no-files-indicator {
+        display: table-row !important;
+    }
+}

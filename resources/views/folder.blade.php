@@ -86,10 +86,13 @@
                         <input type="checkbox">
                     </th>
                     <th scope="col">File name</th>
-                    <th scope="col" style="width: 4rem"></th>
-                    <th scope="col" style="width: 1rem"></th>
-                    <th scope="col" style="width: 150px">Size</th>
-                    <th scope="col" style="width: 150px">Last modify</th>
+                    <th scope="col" class="cell-one-row"></th>
+                    <th scope="col" class="cell-one-row"></th>
+                    <th scope="col" class="cell-one-row">Size</th>
+                    <th scope="col" class="cell-one-row">Last modify</th>
+                </tr>
+                <tr id="no-files-indicator" class="d-none">
+                    <td colspan="6" class="text-center">You don't have files</td>
                 </tr>
             </thead>
             <tbody>

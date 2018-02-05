@@ -1,7 +1,6 @@
 require('./FileModel');
 
-let fileCallbacks = require('./FileEvents');
-
+let fileEventCallbacks = require('./FileEvents');
 
 window.App.FileView = Backbone.View.extend({
     attributes: {
@@ -13,17 +12,18 @@ window.App.FileView = Backbone.View.extend({
     renameFieldTemplate: _.template(require('./templates/FileView/renameField.html')),
 
     events: {
-        'click': fileCallbacks.click,
-        'dblclick': fileCallbacks.dblClick,
-        'click .favorite-btn button': fileCallbacks.favoriteBtnClick,
+        'click': fileEventCallbacks.click,
+        'dblclick': fileEventCallbacks.dblClick,
+        'click .favorite-btn button': fileEventCallbacks.favoriteBtnClick,
         'click .file-rename button[data-action="cancel"]': 'render',
-        'click .file-rename button[data-action="save"]': fileCallbacks.renameSave,
+        'click .file-rename button[data-action="save"]': fileEventCallbacks.renameSave,
     },
 
     initialize: function () {
         this.model.on('change', this.render, this);
         this.model.on('remove', this.remove, this);
         this.model.on('showRenameField', this.showRenameField, this);
+        this.on('remove', fileEventCallbacks.change);
 
         return this;
     },
@@ -80,5 +80,10 @@ window.App.FileView = Backbone.View.extend({
         
         return this;
     },
+
+    remove: function () {
+        this.trigger('remove', this);
+        return Backbone.View.prototype.remove.apply(this, arguments);
+    }
 
 });

@@ -19,6 +19,8 @@ window.App.FilesCollection = Backbone.Collection.extend({
     },
 
     render: function(refresh = true) {
+        $(App.fileContainer).attr('data-files-count', this.models.length || 0);
+
         if(refresh) {
             this.each(function(model) {
                 model.trigger('remove');
@@ -37,7 +39,7 @@ window.App.FilesCollection = Backbone.Collection.extend({
     fetchAndRender: function() {
         let that = this;
         this.fetch({
-            success: function () {
+            success: function (collection, response, options) {
                 if(App.files) {
                     App.files.remove(App.files.models);
                 }
@@ -47,7 +49,8 @@ window.App.FilesCollection = Backbone.Collection.extend({
                 window.App.files = that;
             },
     
-            error: function () {
+            error: function (collection, response, options) {
+                alert(JSON.stringify(response));
                 alert('Cant load files');
             }
         });

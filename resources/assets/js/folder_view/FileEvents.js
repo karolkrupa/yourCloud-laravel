@@ -1,4 +1,11 @@
 module.exports = {
+    change: function (event) {
+      $(App.fileContainer).attr(
+          'data-files-count',
+          $(App.fileContainer).find('tbody tr').length-1
+      );
+    },
+
     click: function (event) {
         let el = this.$el;
 

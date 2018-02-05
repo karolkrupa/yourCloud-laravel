@@ -11,7 +11,8 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     // require('bootstrap');
-    require('bootstrap/js/src/index');
+    // require('bootstrap/js/src/index');
+    require('bootstrap');
 } catch (e) {}
 
 

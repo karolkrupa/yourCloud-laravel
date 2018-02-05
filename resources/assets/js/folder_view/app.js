@@ -1,6 +1,7 @@
 window.App = {
     selectAllCheckbox: $('#checkbox-select-all input'),
 
+    fileContainer: '#file-list',
     currentDir: {},
     currentDirConfig: {
         id: 0,
@@ -57,15 +58,14 @@ App.createBreadcrumb = function () {
 
     if(App.currentDir.get('name')) {
         template.clone().find('a')
-        .html(App.currentDir.get('name'))
-        .click(App.router.takeRederict)
-        .parent()
-        .addClass('active')
-        .appendTo(container);
+            .html(App.currentDir.get('name'))
+            .click(App.router.takeRederict)
+            .parent()
+            .addClass('active')
+            .appendTo(container);
     }
-    
-}
 
+}
 
 window.App.loadFolder = function (dirId, urlRoot = 'files', withUrlReplace = false) {
     let url = 'api/v1/' + urlRoot;
@@ -100,6 +100,7 @@ window.App.loadFolder = function (dirId, urlRoot = 'files', withUrlReplace = fal
 window.App.refreshFolder = function () {
     App.loadFolder(App.currentDir.dirId, App.currentDir.apiUrl);
 }
+
 
 require('./FileView');
 require('./FilesCollection');

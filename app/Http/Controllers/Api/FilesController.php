@@ -108,6 +108,7 @@ class FilesController extends Controller
             ->favoriteFiles()
             ->get();
 
+            $extededFiles = [];
             foreach($files as $file) {
                 $extededFiles[] = $file->getExtendedInfo();
             }
@@ -141,6 +142,7 @@ class FilesController extends Controller
                 ->where('tag_id', $tagId)
                 ->get();
 
+            $extededFiles = [];
             foreach($files as $file) {
                 $extededFiles = $file->getExtendedInfo();
             }

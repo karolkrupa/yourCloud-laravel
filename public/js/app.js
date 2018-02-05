@@ -60,18 +60,28 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 21);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
-/******/ (Array(21).concat([
-/* 21 */
+/******/ ([
+/* 0 */,
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(22);
+module.exports = __webpack_require__(11);
 
 
 /***/ }),
-/* 22 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -92,18 +102,18 @@ _.templateSettings = {
 
 window.App = {};
 
-__webpack_require__(23);
+__webpack_require__(12);
 
-__webpack_require__(25);
+__webpack_require__(14);
+
+__webpack_require__(15);
+
+__webpack_require__(16);
 
 __webpack_require__(26);
 
-__webpack_require__(27);
-
-__webpack_require__(37);
-
 /***/ }),
-/* 23 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3614,10 +3624,10 @@ function __guardMethod__(obj, methodName, transform) {
     return undefined;
   }
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
 
 /***/ }),
-/* 24 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -3645,7 +3655,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 25 */
+/* 14 */
 /***/ (function(module, exports) {
 
 var YourCloud = {
@@ -3671,7 +3681,7 @@ var YourCloud = {
 window.YourCloud = YourCloud;
 
 /***/ }),
-/* 26 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3733,12 +3743,13 @@ window.enable_dropzonejs = function () {
 // window.enable_dropzonejs = enable_dropzonejs;
 
 /***/ }),
-/* 27 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 window.App = {
     selectAllCheckbox: $('#checkbox-select-all input'),
 
+    fileContainer: '#file-list',
     currentDir: {},
     currentDirConfig: {
         id: 0,
@@ -3827,18 +3838,18 @@ window.App.refreshFolder = function () {
     App.loadFolder(App.currentDir.dirId, App.currentDir.apiUrl);
 };
 
-__webpack_require__(28);
-__webpack_require__(33);
-__webpack_require__(34);
-__webpack_require__(35);
+__webpack_require__(17);
+__webpack_require__(22);
+__webpack_require__(23);
+__webpack_require__(24);
 
 /***/ }),
-/* 28 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(29);
+__webpack_require__(18);
 
-var fileCallbacks = __webpack_require__(30);
+var fileEventCallbacks = __webpack_require__(19);
 
 window.App.FileView = Backbone.View.extend({
     attributes: {
@@ -3846,21 +3857,22 @@ window.App.FileView = Backbone.View.extend({
     },
     tagName: 'tr',
     parent: '#file-list tbody',
-    template: _.template(__webpack_require__(31)),
-    renameFieldTemplate: _.template(__webpack_require__(32)),
+    template: _.template(__webpack_require__(20)),
+    renameFieldTemplate: _.template(__webpack_require__(21)),
 
     events: {
-        'click': fileCallbacks.click,
-        'dblclick': fileCallbacks.dblClick,
-        'click .favorite-btn button': fileCallbacks.favoriteBtnClick,
+        'click': fileEventCallbacks.click,
+        'dblclick': fileEventCallbacks.dblClick,
+        'click .favorite-btn button': fileEventCallbacks.favoriteBtnClick,
         'click .file-rename button[data-action="cancel"]': 'render',
-        'click .file-rename button[data-action="save"]': fileCallbacks.renameSave
+        'click .file-rename button[data-action="save"]': fileEventCallbacks.renameSave
     },
 
     initialize: function initialize() {
         this.model.on('change', this.render, this);
         this.model.on('remove', this.remove, this);
         this.model.on('showRenameField', this.showRenameField, this);
+        this.on('remove', fileEventCallbacks.change);
 
         return this;
     },
@@ -3916,12 +3928,17 @@ window.App.FileView = Backbone.View.extend({
         }
 
         return this;
+    },
+
+    remove: function remove() {
+        this.trigger('remove', this);
+        return Backbone.View.prototype.remove.apply(this, arguments);
     }
 
 });
 
 /***/ }),
-/* 29 */
+/* 18 */
 /***/ (function(module, exports) {
 
 window.App.FileModel = Backbone.Model.extend({
@@ -3965,10 +3982,14 @@ var createNewFile = function createNewFile() {
 };
 
 /***/ }),
-/* 30 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = {
+    change: function change(event) {
+        $(App.fileContainer).attr('data-files-count', $(App.fileContainer).find('tbody tr').length - 1);
+    },
+
     click: function click(event) {
         var el = this.$el;
 
@@ -4012,19 +4033,19 @@ module.exports = {
 };
 
 /***/ }),
-/* 31 */
+/* 20 */
 /***/ (function(module, exports) {
 
-module.exports = "<td class=\"file-icon\">\n    <span class=\"fa-layers\" style=\"font-size: 25px\">\n        <i class=\"fas\"></i>\n        <i class=\"fas fa-circle\" data-fa-transform=\"shrink-10 up-5 left-7\" data-tag-id=\"null\"></i>\n    </span>\n</td>\n<td class=\"file-name\">{{= name }}</td>\n<td class=\"file-controls\">\n    <div>\n        <i class=\"fas fa-user share-user-icon\"></i>\n        <i class=\"fas fa-link share-link-icon\"></i>\n    </div>\n</td>\n<td class=\"favorite-btn\">\n    <button>\n        <i class=\"fas fa-star\"></i>\n    </button>\n</td>\n<td class=\"file-size\">{{= size }}</td>\n<td class=\"file-updated-at\">{{= updated_at }}</td>";
+module.exports = "<td class=\"file-icon\">\n    <span class=\"fa-layers\" style=\"font-size: 25px\">\n        <i class=\"fas\"></i>\n        <i class=\"fas fa-circle\" data-fa-transform=\"shrink-10 up-5 left-7\" data-tag-id=\"null\"></i>\n    </span>\n</td>\n<td class=\"file-name\">{{= name }}</td>\n<td class=\"file-controls cell-one-row\">\n    <div>\n        <i class=\"fas fa-user share-user-icon\"></i>\n        <i class=\"fas fa-link share-link-icon\"></i>\n    </div>\n</td>\n<td class=\"favorite-btn cell-one-row\">\n    <button>\n        <i class=\"fas fa-star\"></i>\n    </button>\n</td>\n<td class=\"file-size cell-one-row\">{{= size }}</td>\n<td class=\"file-updated-at cell-one-row\">{{= updated_at }}</td>\n";
 
 /***/ }),
-/* 32 */
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = "<div class=\"input-group file-rename\">\n    <input type=\"text\" class=\"form-control\" placeholder=\"name\" value=\"{{= name }}\">\n    <span class=\"input-group-btn\">\n        <button class=\"btn btn-secondary\" type=\"button\" data-action=\"cancel\">\n            <i class=\"fas fa-times\"></i>\n        </button>\n        <button class=\"btn btn-secondary\" type=\"button\" data-action=\"save\">\n            <i class=\"fas fa-check\"></i>\n        </button>\n    </span>\n</div>";
 
 /***/ }),
-/* 33 */
+/* 22 */
 /***/ (function(module, exports) {
 
 window.App.FilesCollection = Backbone.Collection.extend({
@@ -4050,6 +4071,8 @@ window.App.FilesCollection = Backbone.Collection.extend({
     render: function render() {
         var refresh = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
+        $(App.fileContainer).attr('data-files-count', this.models.length || 0);
+
         if (refresh) {
             this.each(function (model) {
                 model.trigger('remove');
@@ -4068,7 +4091,7 @@ window.App.FilesCollection = Backbone.Collection.extend({
     fetchAndRender: function fetchAndRender() {
         var that = this;
         this.fetch({
-            success: function success() {
+            success: function success(collection, response, options) {
                 if (App.files) {
                     App.files.remove(App.files.models);
                 }
@@ -4078,7 +4101,8 @@ window.App.FilesCollection = Backbone.Collection.extend({
                 window.App.files = that;
             },
 
-            error: function error() {
+            error: function error(collection, response, options) {
+                alert(JSON.stringify(response));
                 alert('Cant load files');
             }
         });
@@ -4113,7 +4137,7 @@ window.App.FilesCollection = Backbone.Collection.extend({
 });
 
 /***/ }),
-/* 34 */
+/* 23 */
 /***/ (function(module, exports) {
 
 window.App.Router = Backbone.Router.extend({
@@ -4215,12 +4239,12 @@ Backbone.history.start({ pushState: true });
 $('#left-menu a').click(App.router.takeRederict);
 
 /***/ }),
-/* 35 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ShareModalView = Backbone.View.extend({
     model: false,
-    template: _.template(__webpack_require__(36)),
+    template: _.template(__webpack_require__(25)),
     attributes: {
         id: 'fileSharingModal',
         class: 'modal fade'
@@ -4334,13 +4358,13 @@ var ShareModalView = Backbone.View.extend({
 window.App.shareModalView = new ShareModalView();
 
 /***/ }),
-/* 36 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = "<div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n        <div class=\"modal-header\">\n            <h5 class=\"modal-title\">Sharing settings</h5>\n            <button type=\"button\" class=\"close\" data-action=\"cancel\">\n                <span aria-hidden=\"true\">&times;</span>\n            </button>\n        </div>\n        <div class=\"modal-body\">\n            <h5>Sharing by link</h5>\n            <div class=\"input-group share-link\">\n                <input class=\"form-control\" type=\"text\" readonly placeholder=\"Use button to create link\" value=\"{{= share_link? location.origin + '/download/share/' + share_link : '' }}\">\n                <span class=\"input-group-btn\">\n                    <button class=\"btn btn-success\" type=\"button\" data-action=\"shareLinkToggle\">\n                        <i class=\"fas fa-times\"></i>\n                    </button>\n                </span>\n            </div>\n            <hr>\n\n            <h5>Sharing for user</h5>\n            <div class=\"input-group share-for-user\">\n                <input class=\"form-control user-search\" type=\"text\" placeholder=\"Nickname\">\n                <span class=\"input-group-btn\">\n                    <button class=\"btn btn-primary\" type=\"button\" data-action=\"findUser\">\n                        <i class=\"fas fa-search\"></i>\n                    </button>\n                </span>\n                <div class=\"users-list\">\n                    <ul>\n                        <li>User1</li>\n                        <li>User2</li>\n                    </ul>\n                </div>\n            </div>\n\n            <table class=\"table table-hover mt-3 shared-users\">\n                <thead>\n                    <tr>\n                        <th scope=\"col\">Nickname</th>\n                        <th scope=\"col\" class=\"w-25 text-center\">Remove</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    {{ _.each(share_users, function(user) { }}\n                    {{ if(! user) return; }}\n                    <tr data-user-id=\"{{= user.id }}\">\n                        <td class=\"user-name\">{{= user.name }}</td>\n                        <td class=\"remove-sharing text-center\" role=\"button\">\n                            <i class=\"fas fa-unlink\"></i>\n                        </td>\n                    </tr>\n                    {{ }); }}\n                </tbody>\n            </table>\n        </div>\n        <div class=\"modal-footer\">\n            <button type=\"button\" class=\"btn btn-primary\" data-action=\"cancel\">Close</button>\n        </div>\n    </div>\n</div>";
 
 /***/ }),
-/* 37 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4489,4 +4513,4 @@ $('#content').on('contextmenu', ContextMenu.onOpen);
 $('#file-context-menu button').click(ContextMenu.selectOption);
 
 /***/ })
-/******/ ]));
+/******/ ]);
