@@ -1,7 +1,8 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/js/laravel-bootstrap.js": "/js/laravel-bootstrap.js",
+    "/js/folderView.js": "/js/folderView.js",
+    "/js/laravelBootstrap.js": "/js/laravelBootstrap.js",
     "/css/app.css": "/css/app.css",
-    "/css/login_page.css": "/css/login_page.css",
+    "/css/loginPage.css": "/css/loginPage.css",
+    "/js/app.js": "/js/app.js",
     "/js/fontawesome-all.js": "/js/fontawesome-all.js"
 }

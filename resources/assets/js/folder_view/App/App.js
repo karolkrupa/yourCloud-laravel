@@ -1,6 +1,9 @@
-window.App = {
-    selectAllCheckbox: $('#checkbox-select-all input'),
+App.getConfig();
 
+window.App = $.extend(window.App, {
+    selectAllCheckbox: $('#checkbox-select-all'),
+    fileContainer: '#file-table',
+    fileClass: '.file-view',
     currentDir: {},
     currentDirConfig: {
         id: 0,
@@ -17,20 +20,18 @@ window.App = {
             this.createFolder = status;
         },
     },
-}
-
-
-// Select All event
-App.selectAllCheckbox.click(function (event) {
-    if ($(this).prop('checked')) {
-        $('#file-list tbody tr').addClass('active');
-    } else {
-        $('#file-list tbody tr').removeClass('active');
-    }
 });
 
+require('./selectAllFiles');
 require('./breadcrumb');
 require('./folder');
+
+require('./ContextMenu');
+require('./FileModel');
+require('./FileView/FileView');
+require('./FilesCollection');
+require('./Router');
+require('./ShareModalView');
 
 
 

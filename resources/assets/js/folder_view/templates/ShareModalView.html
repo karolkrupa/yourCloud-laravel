@@ -1,15 +1,15 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Sharing settings</h5>
+            <h5 class="modal-title">{{= localization.modal_sharing_title}}</h5>
             <button type="button" class="close" data-action="cancel">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
-            <h5>Sharing by link</h5>
+            <h5>{{= localization.modal_sharing_by_link}}</h5>
             <div class="input-group share-link">
-                <input class="form-control" type="text" readonly placeholder="Use button to create link" value="{{= share_link? location.origin + '/download/share/' + share_link : '' }}">
+                <input class="form-control" type="text" readonly placeholder="{{= localization.modal_sharing_by_link_empty}}" value="{{= data.share_link? location.origin + '/download/share/' + data.share_link : '' }}">
                 <span class="input-group-btn">
                     <button class="btn btn-success" type="button" data-action="shareLinkToggle">
                         <i class="fas fa-times"></i>
@@ -18,9 +18,9 @@
             </div>
             <hr>
 
-            <h5>Sharing for user</h5>
+            <h5>{{= localization.modal_sharing_for_user}}</h5>
             <div class="input-group share-for-user">
-                <input class="form-control user-search" type="text" placeholder="Nickname">
+                <input class="form-control user-search" type="text" placeholder="{{= localization.modal_sharing_for_user_empty}}">
                 <span class="input-group-btn">
                     <button class="btn btn-primary" type="button" data-action="findUser">
                         <i class="fas fa-search"></i>
@@ -37,12 +37,12 @@
             <table class="table table-hover mt-3 shared-users">
                 <thead>
                     <tr>
-                        <th scope="col">Nickname</th>
-                        <th scope="col" class="w-25 text-center">Remove</th>
+                        <th scope="col">{{= localization.modal_sharing_user_nickname}}</th>
+                        <th scope="col" class="w-25 text-center">{{= localization.modal_sharing_user_remove}}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{ _.each(share_users, function(user) { }}
+                    {{ _.each(data.share_users, function(user) { }}
                     {{ if(! user) return; }}
                     <tr data-user-id="{{= user.id }}">
                         <td class="user-name">{{= user.name }}</td>

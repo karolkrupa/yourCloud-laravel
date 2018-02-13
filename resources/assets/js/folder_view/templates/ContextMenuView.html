@@ -1,0 +1,19 @@
+<div class="list-group">
+    <button data-action="newFolder" type="button" class="list-group-item list-group-item-action"><i class="fas fa-folder"></i>{{= localization.context_new_folder }}</button>
+    <button data-action="newFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-file-alt"></i>{{= localization.context_new_file }}</button>
+    <button data-action="share" type="button" class="list-group-item list-group-item-action"><i class="fas fa-share-alt"></i>{{= localization.context_share }}</button>
+    <div id="tag-context-menu">
+        <button type="button" class="list-group-item list-group-item-action"><i class="fas fa-star"></i>{{= localization.context_tag }}</button>
+        <div class="list-group">
+            <button data-action="setTag" data-tag-id="1" type="button" class="list-group-item list-group-item-action text-primary"><i class="fas fa-circle"></i>{{= localization.tag_blue }}</button>
+            <button data-action="setTag" data-tag-id="2" type="button" class="list-group-item list-group-item-action text-success"><i class="fas fa-circle"></i>{{= localization.tag_green }}</button>
+            <button data-action="setTag" data-tag-id="3" type="button" class="list-group-item list-group-item-action text-danger"><i class="fas fa-circle"></i>{{= localization.tag_red }}</button>
+            <button data-action="setTag" data-tag-id="4" type="button" class="list-group-item list-group-item-action text-warning"><i class="fas fa-circle"></i>{{= localization.tag_yellow }}</button>
+            <button data-action="setTag" data-tag-id="5" type="button" class="list-group-item list-group-item-action text-info"><i class="fas fa-circle"></i>{{= localization.tag_azure }}</button>
+        </div>
+    </div>
+
+    <button data-action="rename" type="button" class="list-group-item list-group-item-action"><i class="fas fa-pencil-alt"></i>{{= localization.context_rename }}</button>
+    <button data-action="deleteFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-trash-alt"></i>{{= localization.context_delete }}</button>
+    <button data-action="downloadFile" type="button" class="list-group-item list-group-item-action"><i class="fas fa-download"></i>{{= localization.context_download }}</button>
+</div>

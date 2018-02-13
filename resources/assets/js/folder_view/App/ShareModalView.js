@@ -1,6 +1,6 @@
-let ShareModalView = Backbone.View.extend({
+window.App.ShareModalView = Backbone.View.extend({
     model: false,
-    template: _.template(require('./templates/ShareModalView.html')),
+    template: _.template(require('../templates/ShareModalView.html')),
     attributes: {
         id: 'fileSharingModal',
         class: 'modal fade',
@@ -22,7 +22,12 @@ let ShareModalView = Backbone.View.extend({
     render: function(model) {
         this.model = model;
 
-        this.$el.html(this.template(this.model.toJSON()));
+        let data = {
+            data: this.model.toJSON(),
+            localization: App.config.localizationArray,
+        };
+
+        this.$el.html(this.template(data));
 
         return this;
     },
@@ -111,4 +116,4 @@ let ShareModalView = Backbone.View.extend({
     }
 });
 
-window.App.shareModalView = new ShareModalView();
+window.App.shareModalView = new App.ShareModalView();

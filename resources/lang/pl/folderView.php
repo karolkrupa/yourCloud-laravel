@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'file_name' => 'Nazwa pliku',
+    'file_size' => 'Rozmiar',
+    'file_last_modify' => "Ostatnia modyfikacja",
+    'new_file_name' => 'Nowy plik',
+    'new_folder_name' => 'Nowy folder',
+    'menu_main' => 'Dom',
+    'menu_favorites' => 'Ulubione',
+    'menu_tags' => 'Tagi',
+    'tag_blue' => 'Niebieski',
+    'tag_green' => 'Zielony',
+    'tag_red' => 'Czerwony',
+    'tag_yellow' => 'Żółty',
+    'tag_azure' => 'Morski',
+    'menu_shared_for_me' => 'Udostępnione dla mnie',
+    'menu_shared_by_me' => 'Udostępnione przeze mnie',
+    'context_new_folder' => 'Nowy folder',
+    'context_new_file' => 'Nowy plik',
+    'context_share' => 'Udostępnij',
+    'context_tag' => 'Otaguj',
+    'context_rename' => 'Zmień nazwę',
+    'context_delete' => 'Usuń',
+    'context_download' => 'Pobierz',
+    'modal_sharing_title' => 'Ustawienia udostępniania',
+    'modal_sharing_by_link' => 'Udostępnianie przez link',
+    'modal_sharing_by_link_empty' => 'Użyj przycisku aby udostępnić link',
+    'modal_sharing_for_user' => 'Udostępnianie innym użytkownikom',
+    'modal_sharing_for_user_empty' => 'Wpisz nazwę użytkownika',
+    'modal_sharing_user_nickname' => 'Nazwa użytkownika',
+    'modal_sharing_user_remove' => 'Usuń'
+];

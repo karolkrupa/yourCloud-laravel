@@ -11,10 +11,19 @@ module.exports = {
 
         // Uncheck select All checkbox
         if(! el.hasClass('active-static')) {
+            // Set file highlight
             if(el.hasClass('active')) {
-                App.selectAllCheckbox.prop('checked', false);
+                // Remove highlight
+                App.selectAllCheckbox.trigger('uncheck');
+            }else {
+                // Add highlight
+                if($(App.fileContainer).find(App.fileClass).not('.active').length == 1) {
+                    // All files are highlighted
+                    App.selectAllCheckbox.trigger('check');
+                }
             }
 
+            // Add or remove highlight
             el.toggleClass('active');
         }
     },
@@ -33,6 +42,7 @@ module.exports = {
         
         this.$el.removeClass('active-static');
         this.$el.addClass('active');
+        App.files.sortViews();
     },
 
     favoriteBtnClick: function(event) {

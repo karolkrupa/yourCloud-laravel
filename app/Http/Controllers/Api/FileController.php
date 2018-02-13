@@ -130,7 +130,7 @@ class FileController extends Controller
         // Filtering data
         $incomingData = array_intersect_key($request->all(), $fileData);
 
-        $newShareUsers = $incomingData['share_users'];
+        $newShareUsers = isset($incomingData['share_users'])? $incomingData['share_users'] : [];
         unset($incomingData['share_users']);
         unset($incomingData['parents']);
 

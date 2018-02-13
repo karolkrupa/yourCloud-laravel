@@ -11,6 +11,7 @@ window.App.FileModel = Backbone.Model.extend({
         }
 
         options.error = function(model, response, options) {
+            console.error(JSON.stringify(response));
             YourCloud.addAlert(response.responseJSON['message'], 'warning');
             model.fetch();
 
@@ -19,7 +20,9 @@ window.App.FileModel = Backbone.Model.extend({
             }
         }
 
-        return this.save(attributes, options); 
+        this.save(attributes, options);
+
+        App.files.sortViews();
     },
 
     downloadFile: function() {

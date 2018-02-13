@@ -1,7 +1,7 @@
 @extends('layouts.base')
 
 @section('custom-head')
-    <link rel="stylesheet" href="{{ asset('css/login_page.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/loginPage.css') }}">
 @endsection
 
 @section('content-base')

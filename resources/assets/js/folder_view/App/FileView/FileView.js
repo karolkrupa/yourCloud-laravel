@@ -1,4 +1,4 @@
-require('./FileModel');
+// require('../FileModel');
 
 let fileEventCallbacks = require('./FileEvents');
 
@@ -7,16 +7,18 @@ window.App.FileView = Backbone.View.extend({
         role: 'link',
     },
     tagName: 'tr',
-    parent: '#file-list tbody',
-    template: _.template(require('./templates/FileView/FileView.html')),
-    renameFieldTemplate: _.template(require('./templates/FileView/renameField.html')),
+    parent: '#file-table tbody',
+    template: _.template(require('../../templates/FileView/FileView.html')),
+    renameFieldTemplate: _.template(require('../../templates/FileView/renameField.html')),
+    className: 'file-view',
 
     events: {
         'click': fileEventCallbacks.click,
         'dblclick': fileEventCallbacks.dblClick,
-        'click .favorite-btn button': fileEventCallbacks.favoriteBtnClick,
+        'click #file-favorite-btn': fileEventCallbacks.favoriteBtnClick,
         'click .file-rename button[data-action="cancel"]': 'render',
         'click .file-rename button[data-action="save"]': fileEventCallbacks.renameSave,
+        'contextmenu': App.contextMenu.show,
     },
 
     initialize: function () {
@@ -72,6 +74,8 @@ window.App.FileView = Backbone.View.extend({
         this.$el.attr('data-file-id', this.model.attributes.id);
         this.$el.attr('data-file-type', this.model.attributes.type);
         this.$el.attr('data-file-name', this.model.attributes.name);
+        this.$el.attr('data-file-size', this.model.attributes.size);
+        this.$el.attr('data-file-last-modify', this.model.attributes.updated_at);
         this.$el.attr('data-favorite', this.model.attributes.favorite? 'true' : 'false');
         this.$el.attr('data-link-share', this.model.attributes.share_link? 'true': 'false');
         if(this.model.attributes.share_users) {

@@ -1,0 +1,71 @@
+#file-table {
+
+  // Styles shared betwen favorite btn and file indicators
+  #file-controls {
+    color: $text-color-alt;
+    text-align: right;
+  }
+
+
+  // Styles for file idicators
+  #file-indicators {
+    display: inline-block;
+
+    // Hide file indicators
+    svg {
+      display: none;
+    }
+  }
+
+
+  // Styles for favorite button
+  #file-favorite-btn {
+    background: none;
+    border: none;
+    color: $text-color;
+    cursor: pointer;
+
+    &:hover {
+      color: inherit;
+    }
+  }
+
+  // Styles when file is higlighted
+  .file-view.active, .file-view.static-active {
+    // Styles shared betwen favorite btn and file indicators
+    #file-controls {
+      color: darken($text-color-alt, 20);
+    }
+
+    // Styles for file idicators
+    #file-indicators {
+
+    }
+
+
+    // Styles for favorite button
+    #file-favorite-btn {
+
+    }
+  }
+
+  // Show share link icon
+  .file-view[data-link-share='true'] .share-link-icon {
+    display: inline-block !important;
+  }
+
+  //  Show share user icon
+  .file-view[data-user-share='true'] .share-user-icon {
+    display: inline-block !important;
+  }
+
+  //  highlight favorite button
+  .file-view[data-favorite='true'] #file-favorite-btn {
+    color: inherit;
+
+    &:hover {
+      color: $text-color;
+    }
+  }
+
+}

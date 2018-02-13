@@ -1,0 +1,29 @@
+#file-table {
+  th, td {
+    vertical-align: middle !important;
+  }
+
+  .file-view {
+    cursor: pointer;
+
+    &:hover {
+      background-color: $file-hover-color;
+    }
+
+    .file-icon {
+      font-size: 25px;
+      padding: 0;
+      text-align: center;
+    }
+
+    &.active, &.active-static {
+      background-color: $text-color-alt;
+      color: lighten($text-color, 10);
+
+      &:hover {
+        background-color: lighten($text-color-alt, 4) !important;
+        color: lighten($text-color, 15);
+      }
+    }
+  }
+}

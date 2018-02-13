@@ -26,6 +26,8 @@ Route::get('v1/files/shareforme', 'Api\FilesController@showShareForMe')->middlew
 Route::get('v1/files/sharebyme', 'Api\FilesController@showShareByMe')->middleware('auth:api');
 Route::resource('v1/files', Api\FilesController::class)->middleware('auth:api');
 
+Route::get('v1/config', 'Api\ConfigController@getConfig')->middleware('auth:api');
+
 // Route::get('v1/files/extended/{id?}', 'Api\FilesController@showExtended')->middleware('auth:api');
 
 Route::get('/test', function () {

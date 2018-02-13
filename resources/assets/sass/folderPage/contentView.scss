@@ -1,0 +1,50 @@
+// Styles for file table containing all files
+#file-table {
+  z-index: 1;
+
+  [data-sort-by] {
+    cursor: pointer;
+
+    &:hover {
+      color: $text-color-alt;
+    }
+  }
+
+  .file-size, .file-updated-at {
+    text-align: center;
+  }
+
+  // Show indicator when no have files
+  &[data-files-count='0'] {
+    #no-files-indicator {
+      display: table-row !important;
+    }
+  }
+
+  // Checkbox for selecting all files
+  #checkbox-select-all {
+    width: 46px;
+    text-align: center;
+    font-size: 20px;
+    padding: 0;
+    cursor: pointer;
+
+    &:hover {
+      color: $text-color-alt;
+    }
+  }
+
+  // The class that sets the width of the column
+  // depends on the width of the elements it contains
+  .cell-one-row {
+    width: 1%;
+    white-space: nowrap;
+  }
+}
+
+
+#breadcrumb .breadcrumb {
+  background-color: $secondary-color;
+  border-radius: 0;
+}
+
