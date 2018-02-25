@@ -3,6 +3,8 @@
     "/js/laravelBootstrap.js": "/js/laravelBootstrap.js",
     "/css/app.css": "/css/app.css",
     "/css/loginPage.css": "/css/loginPage.css",
+    "/css/settingsPage.css": "/css/settingsPage.css",
+    "/js/settingsView.js": "/js/settingsView.js",
     "/js/app.js": "/js/app.js",
     "/js/fontawesome-all.js": "/js/fontawesome-all.js"
 }

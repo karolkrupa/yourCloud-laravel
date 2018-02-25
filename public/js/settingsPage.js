@@ -60,85 +60,87 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 37);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 11:
+/***/ 37:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(12);
+module.exports = __webpack_require__(38);
 
 
 /***/ }),
 
-/***/ 12:
+/***/ 38:
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
-__webpack_require__(13);
-
-$.ajaxSetup({
-    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
-});
-
-_.templateSettings = {
-    interpolate: /\{\{=(.+?)\}\}/g,
-    evaluate: /\{\{(.+?)\}\}/g
-};
-
-window.App = {
-    config: {
-        localizationArray: {}
-    },
-    getConfig: function getConfig() {
-        // Config loading
-        $.ajax('/api/v1/config', {
-            async: false,
-            dataType: 'json'
-        }).done(function (data) {
-            App.config = data;
-        }).fail(function (data) {
-            YourCloud.addAlert("Can't load configuration", 'danger');
-            console.error(JSON.stringify(data));
-        });
-    }
-};
-
-App.getConfig();
+__webpack_require__(39);
 
 /***/ }),
 
-/***/ 13:
+/***/ 39:
 /***/ (function(module, exports) {
 
-var YourCloud = {
-    alertTemplate: '<div class="alert alert-dismissible fade show text-center" role="alert">\n' + '    <button type="button" class="close" data-dismiss="alert" aria-label="Close">\n' + '        <span aria-hidden="true">&times;</span>\n' + '    </button>\n' + '</div>',
+$('#update-full-name').click(function (event) {
+    var fullName = $('#full-name');
+    $.post('/api/v1/user/update/fullName', { full_name: fullName.val() }).done(function (response) {
+        if (App.config.debug) {
+            console.info('[dataUpdates] Recived: ' + JSON.stringify(response));
+        }
 
-    srollTo: function srollTo(el) {
-        var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
+        fullName.val(response.new_full_name);
+        YourCloud.addAlert(response.message, 'success');
+    }).fail(function (response) {
+        if (App.config.debug) {
+            console.error('[dataUpdates] Recived: ' + JSON.stringify(response));
+        }
 
-        $('html, body').animate({
-            scrollTop: $(el).offset().top - $(window).height() / 2
-        }, time);
-    },
+        YourCloud.addAlert(response.responseJSON.message, 'warning');
+    });
+});
 
-    addAlert: function addAlert(msg, type) {
-        var alert = $(this.alertTemplate);
-        alert.addClass('alert-' + type);
-        alert.prepend(msg);
+$('#update-language').click(function (event) {
+    var lang = $('#selected-language');
+    $.post('/api/v1/user/update/language', { lang: lang.val() }).done(function (response) {
+        if (App.config.debug) {
+            console.info('[dataUpdates] Recived: ' + JSON.stringify(response));
+        }
 
-        alert.appendTo('#alerts-container');
-    }
-};
+        // lang.val(response.new_full_name);
+        YourCloud.addAlert(response.message, 'success');
+        setTimeout(function () {
+            location.reload();
+        }, 3000);
+    }).fail(function (response) {
+        if (App.config.debug) {
+            console.error('[dataUpdates] Recived: ' + JSON.stringify(response));
+        }
 
-window.YourCloud = YourCloud;
+        YourCloud.addAlert(response.responseJSON.message, 'warning');
+    });
+});
+
+$('#update-password').click(function (event) {
+    var password = $('#password');
+    var password_repeat = $('#password-repeat');
+    $.post('/api/v1/user/update/password', { password: password.val(), password_confirmation: password_repeat.val() }).done(function (response) {
+        if (App.config.debug) {
+            console.info('[dataUpdates] Recived: ' + JSON.stringify(response));
+        }
+
+        password.val('');
+        password_repeat.val('');
+        YourCloud.addAlert(response.message, 'success');
+    }).fail(function (response) {
+        if (App.config.debug) {
+            console.error('[dataUpdates] Recived: ' + JSON.stringify(response));
+        }
+
+        YourCloud.addAlert(response.responseJSON.message, 'warning');
+    });
+});
 
 /***/ })
 

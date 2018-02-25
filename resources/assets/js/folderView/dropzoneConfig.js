@@ -1,7 +1,7 @@
 'use strict';
 
-window.App.dropzonejs_config = {
-    url: window.location.href,
+window.App.dropzonejsConfig = {
+    url: '/api/v1',
     parallelUploads: 1,
     previewsContainer: '#dropzonejs-container',
     previewTemplate: $('#dropzonejs-template').html(),
@@ -29,9 +29,15 @@ window.App.dropzonejs_config = {
             });
         }, 3000, file);
 
-        file = FileList.addFileToList(data).addClass('active');
+        if(App.config.debug) {
+            console.info('[DropzoneJS] Recived file: '+ JSON.stringify(data));
+        }
 
-        YourCloud.srollTo(file);
+        App.files.add(data);
+        App.files.render();
+        App.files.sortViews();
+
+        YourCloud.srollTo($('[data-file-id="'+ data.id +'"]'));
     },
     sending: function(file, xhr) {
         $('#dropzonejs-container .dz-complete').remove();
@@ -43,8 +49,4 @@ window.App.dropzonejs_config = {
         $(file.previewElement).find('.progress-bar').attr('aria-valuenow', progress);
         $(file.previewElement).find('.progress-bar').html(progress + '%');
     },
-};
-
-window.App.enable_dropzonejs = function(container = '#content') {
-    $(container).dropzone(App.dropzonejs_config);
 };

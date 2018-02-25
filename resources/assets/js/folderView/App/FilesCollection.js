@@ -65,12 +65,16 @@ window.App.FilesCollection = Backbone.Collection.extend({
     },
 
     sortViews: function (asc = true) {
-        this.sortViewsBy('data-file-name', asc);
+        this.sortViewsBy(this.lastSortAttr, (this.lastSortMultipler === -1)? false : true);
     },
 
     sortViewsBy: function (sortAttr = false, asc = true) {
         let files = $(App.fileContainer).find('tbody tr[data-file-type="1"]');
         let folders = $(App.fileContainer).find('tbody tr[data-file-type="0"]');
+
+        if(! sortAttr) {
+            sortAttr == 'data-file-name';
+        }
 
         this.lastSortAttr = sortAttr;
 

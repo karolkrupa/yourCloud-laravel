@@ -34,6 +34,8 @@ window.App = {
     }
 };
 
+App.getConfig();
+
 
 
 

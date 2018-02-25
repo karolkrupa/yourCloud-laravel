@@ -41,7 +41,10 @@ window.App.Router = Backbone.Router.extend({
     main: function(query) {
         let dirId = this.getFromQuery('dirId', query) || 0;
 
-        $('#left-menu a').removeClass('active');
+        App.dropzone.enable();
+        App.dropzone.options.url = App.fileUploadApiUrl + dirId;
+
+            $('#left-menu a').removeClass('active');
         $('#left-menu a[href="/files"]').addClass('active');
 
         window.App.loadFolder(dirId, 'files');
@@ -50,6 +53,8 @@ window.App.Router = Backbone.Router.extend({
     },
 
     favorites: function(query) {
+        App.dropzone.disable();
+
         $('#left-menu a').removeClass('active');
         $('#left-menu a[href="/files/favorites"]').addClass('active');
 
@@ -59,6 +64,8 @@ window.App.Router = Backbone.Router.extend({
     },
 
     tag: function(id, query) {
+        App.dropzone.disable();
+
         if(id == null) {
             return this.main(query);
         }
@@ -72,6 +79,8 @@ window.App.Router = Backbone.Router.extend({
     },
 
     shareForMe: function() {
+        App.dropzone.disable();
+
         $('#left-menu a').removeClass('active');
         $('#left-menu a[href="/files/sharedforme"]').addClass('active');
 
@@ -81,6 +90,8 @@ window.App.Router = Backbone.Router.extend({
     },
 
     shareByMe: function() {
+        App.dropzone.disable();
+
         $('#left-menu a').removeClass('active');
         $('#left-menu a[href="/files/sharedbyme"]').addClass('active');
 

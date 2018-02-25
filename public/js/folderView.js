@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 16);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,894 +79,26 @@
 /* 12 */,
 /* 13 */,
 /* 14 */,
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(16);
-
-
-/***/ }),
+/* 15 */,
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(17);
+module.exports = __webpack_require__(17);
 
-__webpack_require__(32);
-__webpack_require__(34);
-__webpack_require__(35);
 
 /***/ }),
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-App.getConfig();
-
-window.App = $.extend(window.App, {
-    selectAllCheckbox: $('#checkbox-select-all'),
-    fileContainer: '#file-table',
-    fileClass: '.file-view',
-    currentDir: {},
-    currentDirConfig: {
-        id: 0,
-        apiUrl: 'files',
-        createFolder: false,
-        createFile: false,
-
-        fileCreating: function fileCreating() {
-            var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-            if (status == null) {
-                return this.createFile && this.createFolder;
-            }
-
-            this.createFile = status;
-            this.createFolder = status;
-        }
-    }
-});
-
-__webpack_require__(18);
-__webpack_require__(19);
+window.Dropzone = __webpack_require__(18);
 __webpack_require__(20);
 
 __webpack_require__(21);
-__webpack_require__(23);
-__webpack_require__(24);
-__webpack_require__(28);
-__webpack_require__(29);
-__webpack_require__(30);
+
+__webpack_require__(36);
 
 /***/ }),
 /* 18 */
-/***/ (function(module, exports) {
-
-App.selectAllCheckbox.bind('check', function () {
-    $(this).find('[data-fa-processed]').attr('data-icon', 'check-square');
-});
-
-App.selectAllCheckbox.bind('uncheck', function () {
-    $(this).find('[data-fa-processed]').attr('data-icon', 'square');
-});
-
-// Select All event
-App.selectAllCheckbox.click(function (event) {
-    var icon = $(this).find('[data-fa-processed]');
-    if (icon.attr('data-icon') == 'square') {
-        App.selectAllCheckbox.trigger('check');
-        $('#file-table tbody tr').addClass('active');
-    } else {
-        App.selectAllCheckbox.trigger('uncheck');
-        $('#file-table tbody tr').removeClass('active');
-    }
-});
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-App.createBreadcrumb = function () {
-    var parents = App.currentDir.get('parents');
-    var template = $('<li class="breadcrumb-item"><a></a></li>');
-    var container = $('#breadcrumb ol').empty();
-
-    var currentView = $('#left-menu a.active').clone();
-    currentView.find('svg').remove();
-
-    // View item
-    template.clone().find('a').attr('href', currentView.attr('href')).html(currentView.html()).click(App.router.takeRederict).parent().appendTo(container);
-
-    $(parents).each(function (k, v) {
-        var item = template.clone();
-        item.find('a').attr('href', '/files?dirId=' + v.id).html(v.name).click(App.router.takeRederict);
-
-        container.append(item);
-    });
-
-    if (App.currentDir.get('name')) {
-        template.clone().find('a').html(App.currentDir.get('name')).click(App.router.takeRederict).parent().addClass('active').appendTo(container);
-    }
-};
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-window.App.loadFolder = function (dirId) {
-    var urlRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'files';
-    var withUrlReplace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-    var url = 'api/v1/' + urlRoot;
-
-    App.currentDir.apiUrl = url;
-    App.currentDir.id = dirId;
-
-    if (dirId != null) {
-        url += '/' + dirId;
-    } else {
-        dirId = 0;
-    }
-
-    App.currentDir = new App.FileModel({ id: dirId });
-    App.currentDir.fetch({
-        success: App.createBreadcrumb
-    });
-
-    var files = new App.FilesCollection();
-    files.urlRoot = url;
-
-    files.fetchAndRender();
-
-    url = document.createElement('a');
-    url.href = location.href;
-
-    if (withUrlReplace) {
-        window.App.router.navigate(url.pathname + '?dirId=' + dirId);
-    }
-};
-
-window.App.refreshFolder = function () {
-    App.loadFolder(App.currentDir.dirId, App.currentDir.apiUrl);
-};
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-window.App.ContextMenuView = Backbone.View.extend({
-    attributes: {
-        id: 'file-context-menu'
-    },
-
-    contextMenu: true,
-    parent: '#content',
-    template: _.template(__webpack_require__(22)),
-    model: false,
-
-    events: {
-        'click [data-action="newFolder"]': 'newFolder',
-        'click [data-action="newFile"]': 'newFile',
-        'click [data-action="share"]': 'share',
-        'click [data-action="setTag"]': 'setTag',
-        'click [data-action="rename"]': 'rename',
-        'click [data-action="deleteFile"]': 'deleteFile',
-        'click [data-action="downloadFile"]': 'downloadFile'
-    },
-
-    initialize: function initialize() {
-        this.$el.hide();
-        $(this.parent).append(this.$el);
-        $(this.parent).on('contextmenu', this.show);
-        $(this.parent).on('click', this.hide);
-    },
-
-    render: function render() {
-        var data = {
-            localization: App.config.localizationArray
-        };
-
-        this.$el.html(this.template(data));
-
-        return this;
-    },
-
-    show: function show(event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        var that = App.contextMenu;
-        if (this.contextMenu) {
-            that.model = false;
-        } else {
-            if (typeof this.model !== 'undefined') {
-                that.model = this.model;
-            } else {
-                that.model = false;
-            }
-        }
-
-        that.render();
-        that.selectTag();
-
-        if (that.model == false) {
-            var disabledButtons = ['downloadFile', 'copy', 'rename', 'tag', 'deleteFile', 'share'];
-
-            that.disableButtons(disabledButtons);
-        }
-
-        var posX = event.pageX - that.$el.parent().position().left;
-        var posY = event.pageY - that.$el.parent().position().top;
-        var menuHeight = that.$el.height();
-
-        if (posY + menuHeight + 50 > $(document).height()) {
-            posY -= menuHeight;
-        }
-
-        that.$el.css('top', posY).css('left', posX).show();
-
-        return App.contextMenu;
-    },
-
-    hide: function hide() {
-        App.contextMenu.$el.hide();
-
-        return App.contextMenu;
-    },
-
-    disableButtons: function disableButtons(list) {
-        var that = this;
-        $(list).each(function (k, v) {
-            that.$el.find('[data-action="' + v + '"]').attr('disabled', true);
-        });
-
-        return this;
-    },
-
-    selectTag: function selectTag() {
-        if (!this.model) return;
-
-        var tag_id = this.model.attributes.tag_id;
-        if (typeof tag_id !== 'undefined') {
-            this.$el.find('#tag-context-menu [data-tag-id]').removeClass('active');
-            this.$el.find('#tag-context-menu [data-tag-id="' + tag_id + '"]').addClass('active');
-        } else {
-            this.$el.find('#tag-context-menu [data-tag-id]').removeClass('active');
-        }
-    },
-
-    downloadFile: function downloadFile() {
-        this.model.downloadFile();
-    },
-
-    deleteFile: function deleteFile(event) {
-        this.model.destroy({
-            error: function error(model, response, options) {
-                YourCloud.addAlert(response.responseJSON.message, 'warning');
-                App.files.push(model);
-                App.files.render();
-            }
-        });
-    },
-
-    newFile: function newFile(event) {
-        var model = App.files.add({
-            type: 1,
-            name: App.config.localizationArray.new_file_name,
-            size: '-',
-            updated_at: '-'
-        });
-
-        App.files.render();
-        model.trigger('showRenameField');
-    },
-
-    newFolder: function newFolder(event) {
-        var model = App.files.add({
-            type: 0,
-            name: App.config.localizationArray.new_folder_name,
-            size: '-',
-            updated_at: '-'
-        });
-
-        App.files.render();
-        model.trigger('showRenameField');
-    },
-
-    rename: function rename(event) {
-        this.model.trigger('showRenameField');
-    },
-
-    setTag: function setTag(event) {
-        var tagId = $(event.target).data('tag-id');
-        var file = this.model;
-
-        if (file.attributes.tag_id == tagId) {
-            tagId = 0;
-        }
-
-        file.attributes.tag_id = tagId;
-        file.safeSave();
-        file.trigger('change');
-    },
-
-    share: function share(event) {
-        App.shareModalView.render(this.model);
-        App.shareModalView.show();
-    }
-});
-
-App.contextMenu = new App.ContextMenuView();
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-module.exports = "<div class=\"list-group\">\n    <button data-action=\"newFolder\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-folder\"></i>{{= localization.context_new_folder }}</button>\n    <button data-action=\"newFile\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-file-alt\"></i>{{= localization.context_new_file }}</button>\n    <button data-action=\"share\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-share-alt\"></i>{{= localization.context_share }}</button>\n    <div id=\"tag-context-menu\">\n        <button type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-star\"></i>{{= localization.context_tag }}</button>\n        <div class=\"list-group\">\n            <button data-action=\"setTag\" data-tag-id=\"1\" type=\"button\" class=\"list-group-item list-group-item-action text-primary\"><i class=\"fas fa-circle\"></i>{{= localization.tag_blue }}</button>\n            <button data-action=\"setTag\" data-tag-id=\"2\" type=\"button\" class=\"list-group-item list-group-item-action text-success\"><i class=\"fas fa-circle\"></i>{{= localization.tag_green }}</button>\n            <button data-action=\"setTag\" data-tag-id=\"3\" type=\"button\" class=\"list-group-item list-group-item-action text-danger\"><i class=\"fas fa-circle\"></i>{{= localization.tag_red }}</button>\n            <button data-action=\"setTag\" data-tag-id=\"4\" type=\"button\" class=\"list-group-item list-group-item-action text-warning\"><i class=\"fas fa-circle\"></i>{{= localization.tag_yellow }}</button>\n            <button data-action=\"setTag\" data-tag-id=\"5\" type=\"button\" class=\"list-group-item list-group-item-action text-info\"><i class=\"fas fa-circle\"></i>{{= localization.tag_azure }}</button>\n        </div>\n    </div>\n\n    <button data-action=\"rename\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-pencil-alt\"></i>{{= localization.context_rename }}</button>\n    <button data-action=\"deleteFile\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-trash-alt\"></i>{{= localization.context_delete }}</button>\n    <button data-action=\"downloadFile\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-download\"></i>{{= localization.context_download }}</button>\n</div>\n";
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports) {
-
-window.App.FileModel = Backbone.Model.extend({
-    urlRoot: '/api/v1/file',
-
-    safeSave: function safeSave() {
-        var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-        options.success = function (model, response, options) {
-            App.files.sortViews();
-
-            if (options.afterSuccess) {
-                options.afterSuccess(model, response, options);
-            }
-        };
-
-        options.error = function (model, response, options) {
-            console.error(JSON.stringify(response));
-            YourCloud.addAlert(response.responseJSON['message'], 'warning');
-            model.fetch();
-
-            if (options.afterError) {
-                options.afterSuccess(model, response, options);
-            }
-        };
-
-        this.save(attributes, options);
-
-        App.files.sortViews();
-    },
-
-    downloadFile: function downloadFile() {
-        location.replace('/download/' + this.attributes.id);
-    }
-});
-
-var createNewFile = function createNewFile() {
-    var newFile = new App.FileModel({ name: 'New File', parent_id: App.currentDirId, type: 1 });
-
-    if (newFile.safeSave().statusText == 'OK') {
-        App.files.push(newFile);
-    }
-};
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// require('../FileModel');
-
-var fileEventCallbacks = __webpack_require__(25);
-
-window.App.FileView = Backbone.View.extend({
-    attributes: {
-        role: 'link'
-    },
-    tagName: 'tr',
-    parent: '#file-table tbody',
-    template: _.template(__webpack_require__(26)),
-    renameFieldTemplate: _.template(__webpack_require__(27)),
-    className: 'file-view',
-
-    events: {
-        'click': fileEventCallbacks.click,
-        'dblclick': fileEventCallbacks.dblClick,
-        'click #file-favorite-btn': fileEventCallbacks.favoriteBtnClick,
-        'click .file-rename button[data-action="cancel"]': 'render',
-        'click .file-rename button[data-action="save"]': fileEventCallbacks.renameSave,
-        'contextmenu': App.contextMenu.show
-    },
-
-    initialize: function initialize() {
-        this.model.on('change', this.render, this);
-        this.model.on('remove', this.remove, this);
-        this.model.on('showRenameField', this.showRenameField, this);
-        this.on('remove', fileEventCallbacks.change);
-
-        return this;
-    },
-
-    render: function render() {
-        this.$el.html(this.template(this.model.toJSON()));
-
-        this.setIcon();
-
-        this.setAttributes();
-
-        return this;
-    },
-
-    append: function append() {
-        var parent = $(this.parent);
-
-        parent.append(this.render().$el);
-
-        return this;
-    },
-
-    setIcon: function setIcon() {
-        var icon = '';
-
-        if (this.model.attributes.type == 0) {
-            icon = 'fa-folder';
-        } else {
-            icon = 'fa-file';
-        }
-
-        this.$el.find('.file-icon i').first().addClass(icon);
-
-        return this;
-    },
-
-    showRenameField: function showRenameField() {
-        this.$el.find('.file-name').html(this.renameFieldTemplate(this.model.toJSON()));
-        this.$el.addClass('active-static');
-
-        return this;
-    },
-
-    setAttributes: function setAttributes() {
-        this.$el.attr('data-tag-id', this.model.attributes.tag_id);
-        this.$el.attr('data-file-id', this.model.attributes.id);
-        this.$el.attr('data-file-type', this.model.attributes.type);
-        this.$el.attr('data-file-name', this.model.attributes.name);
-        this.$el.attr('data-file-size', this.model.attributes.size);
-        this.$el.attr('data-file-last-modify', this.model.attributes.updated_at);
-        this.$el.attr('data-favorite', this.model.attributes.favorite ? 'true' : 'false');
-        this.$el.attr('data-link-share', this.model.attributes.share_link ? 'true' : 'false');
-        if (this.model.attributes.share_users) {
-            this.$el.attr('data-user-share', this.model.attributes.share_users.length > 0 ? 'true' : 'false');
-        }
-
-        return this;
-    },
-
-    remove: function remove() {
-        this.trigger('remove', this);
-        return Backbone.View.prototype.remove.apply(this, arguments);
-    }
-
-});
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports) {
-
-module.exports = {
-    change: function change(event) {
-        $(App.fileContainer).attr('data-files-count', $(App.fileContainer).find('tbody tr').length - 1);
-    },
-
-    click: function click(event) {
-        var el = this.$el;
-
-        // Uncheck select All checkbox
-        if (!el.hasClass('active-static')) {
-            // Set file highlight
-            if (el.hasClass('active')) {
-                // Remove highlight
-                App.selectAllCheckbox.trigger('uncheck');
-            } else {
-                // Add highlight
-                if ($(App.fileContainer).find(App.fileClass).not('.active').length == 1) {
-                    // All files are highlighted
-                    App.selectAllCheckbox.trigger('check');
-                }
-            }
-
-            // Add or remove highlight
-            el.toggleClass('active');
-        }
-    },
-
-    dblClick: function dblClick(event) {
-        if (this.model.attributes.type == 0) {
-            App.router.navigate('files?dirId=' + this.model.attributes.id, { trigger: true });
-        }
-    },
-
-    renameSave: function renameSave(event) {
-        var newName = this.$el.find('.file-rename input').val();
-
-        this.model.attributes.name = newName;
-        this.model.safeSave();
-
-        this.$el.removeClass('active-static');
-        this.$el.addClass('active');
-        App.files.sortViews();
-    },
-
-    favoriteBtnClick: function favoriteBtnClick(event) {
-        event.stopPropagation();
-
-        if (this.model.attributes.favorite) {
-            this.model.attributes.favorite = 0;
-        } else {
-            this.model.attributes.favorite = 1;
-        }
-
-        this.model.safeSave();
-    }
-};
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports) {
-
-module.exports = "\n<td class=\"file-icon\">\n    <span class=\"fa-layers\">\n        <i class=\"fas\"></i>\n        <i class=\"fas fa-circle\" data-fa-transform=\"shrink-10 up-5 left-7\" data-tag-id=\"null\"></i>\n    </span>\n</td>\n<td class=\"file-name\">{{= name }}</td>\n<td class=\"file-controls cell-one-row\" id=\"file-controls\">\n    <div id=\"file-indicators\">\n        <i class=\"fas fa-user share-user-icon\"></i>\n        <i class=\"fas fa-link share-link-icon\"></i>\n    </div>\n    <button id=\"file-favorite-btn\">\n        <i class=\"fas fa-star\"></i>\n    </button>\n</td>\n<td class=\"file-size cell-one-row\">{{= size }}</td>\n<td class=\"file-updated-at cell-one-row\">{{= updated_at }}</td>\n";
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
-module.exports = "<div class=\"input-group file-rename\">\n    <input type=\"text\" class=\"form-control\" placeholder=\"name\" value=\"{{= name }}\">\n    <span class=\"input-group-btn\">\n        <button class=\"btn btn-secondary\" type=\"button\" data-action=\"cancel\">\n            <i class=\"fas fa-times\"></i>\n        </button>\n        <button class=\"btn btn-secondary\" type=\"button\" data-action=\"save\">\n            <i class=\"fas fa-check\"></i>\n        </button>\n    </span>\n</div>";
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports) {
-
-window.App.FilesCollection = Backbone.Collection.extend({
-    model: App.FileModel,
-    urlRoot: '/api/v1/files',
-    views: null,
-    lastSortMultipler: 1,
-    lastSortAttr: 'data-file-name',
-    url: function url() {
-        var url = location.origin + '/' + this.urlRoot;
-
-        return url;
-    },
-
-    createViewsList: function createViewsList() {
-        var views = [];
-
-        this.each(function (file) {
-            views.push(new App.FileView({ model: file }));
-        });
-
-        return views;
-    },
-
-    render: function render() {
-        var refresh = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-        if (refresh) {
-            this.each(function (model) {
-                model.trigger('remove');
-            });
-        }
-
-        $(this.createViewsList()).each(function (k, v) {
-            v.append();
-        });
-
-        this.sortViews();
-
-        $(App.fileContainer).attr('data-files-count', this.models.length || 0);
-
-        return this;
-    },
-
-    fetchAndRender: function fetchAndRender() {
-        var that = this;
-        this.fetch({
-            success: function success(collection, response, options) {
-                if (App.files) {
-                    App.files.remove(App.files.models);
-                }
-
-                that.render(false);
-
-                window.App.files = that;
-            },
-
-            error: function error(collection, response, options) {
-                YourCloud.addAlert(response.responseJSON.message, 'danger');
-                console.error(JSON.stringify(response));
-            }
-        });
-
-        return this;
-    },
-
-    setParentId: function setParentId(id) {
-        this.parent_id = id;
-    },
-
-    sortViews: function sortViews() {
-        var asc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-        this.sortViewsBy('data-file-name', asc);
-    },
-
-    sortViewsBy: function sortViewsBy() {
-        var sortAttr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-        var asc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-        var files = $(App.fileContainer).find('tbody tr[data-file-type="1"]');
-        var folders = $(App.fileContainer).find('tbody tr[data-file-type="0"]');
-
-        this.lastSortAttr = sortAttr;
-
-        var sortMultipler = asc ? 1 : -1;
-        this.lastSortMultipler = sortMultipler;
-
-        folders.sort(function (a, b) {
-            return $(a).attr(sortAttr).localeCompare($(b).attr(sortAttr), {}, { numeric: true }) * sortMultipler;
-        }).appendTo(App.fileContainer);
-
-        files.sort(function (a, b) {
-            return $(a).attr(sortAttr).localeCompare($(b).attr(sortAttr), {}, { numeric: true }) * sortMultipler;
-        }).appendTo(App.fileContainer);
-    },
-
-    toggleSortViews: function toggleSortViews() {
-        var sortAttr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-        var negativeMultipler = this.lastSortMultipler == 1 ? false : true;
-        if (!sortAttr) {
-            this.sortViews(negativeMultipler);
-        } else if (sortAttr == this.lastSortAttr) {
-            this.sortViewsBy(sortAttr, negativeMultipler);
-        } else {
-            this.sortViewsBy(sortAttr);
-        }
-    }
-});
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
-window.App.Router = Backbone.Router.extend({
-    routes: {
-        'files(?*query)': 'main',
-        'files/favorites(?*query)': 'favorites',
-        'files/tag/:id(?*query)': 'tag',
-        'files/sharedforme': 'shareForMe',
-        'files/sharedbyme': 'shareByMe'
-    },
-
-    getFromQuery: function getFromQuery(parameter, query) {
-        var parameterValue = null;
-
-        if (query == null) {
-            return parameterValue;
-        }
-
-        if (parameter.charAt(parameter.length - 1) != '=') {
-            parameter += '=';
-        }
-
-        var parameterPos = query.indexOf(parameter);
-
-        if (parameterPos > -1) {
-            var valueStart = parameterPos + parameter.length;
-
-            var valueEnd = query.indexOf('&', valueStart);
-            valueEnd = valueEnd < 1 ? query.length : valueEnd;
-
-            parameterValue = query.substr(valueStart, valueEnd);
-        }
-
-        return parameterValue;
-    },
-
-    takeRederict: function takeRederict(event) {
-        event.preventDefault();
-
-        App.router.navigate($(this).attr('href'), { trigger: true });
-    },
-
-    main: function main(query) {
-        var dirId = this.getFromQuery('dirId', query) || 0;
-
-        $('#left-menu a').removeClass('active');
-        $('#left-menu a[href="/files"]').addClass('active');
-
-        window.App.loadFolder(dirId, 'files');
-
-        App.currentDirConfig.fileCreating(true);
-    },
-
-    favorites: function favorites(query) {
-        $('#left-menu a').removeClass('active');
-        $('#left-menu a[href="/files/favorites"]').addClass('active');
-
-        window.App.loadFolder(null, 'files/favorites');
-
-        App.currentDirConfig.fileCreating(false);
-    },
-
-    tag: function tag(id, query) {
-        if (id == null) {
-            return this.main(query);
-        }
-
-        $('#left-menu a').removeClass('active');
-        $('#left-menu a[href="/files/tag/' + id + '"]').addClass('active');
-
-        window.App.loadFolder(null, 'files/tag/' + id);
-
-        App.currentDirConfig.fileCreating(false);
-    },
-
-    shareForMe: function shareForMe() {
-        $('#left-menu a').removeClass('active');
-        $('#left-menu a[href="/files/sharedforme"]').addClass('active');
-
-        window.App.loadFolder(null, 'files/shareforme');
-
-        App.currentDirConfig.fileCreating(false);
-    },
-
-    shareByMe: function shareByMe() {
-        $('#left-menu a').removeClass('active');
-        $('#left-menu a[href="/files/sharedbyme"]').addClass('active');
-
-        window.App.loadFolder(null, 'files/sharebyme');
-
-        App.currentDirConfig.fileCreating(false);
-    }
-});
-
-window.App.router = new App.Router();
-Backbone.history.start({ pushState: true });
-
-// Menu bindings
-$('#left-menu a').click(App.router.takeRederict);
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-window.App.ShareModalView = Backbone.View.extend({
-    model: false,
-    template: _.template(__webpack_require__(31)),
-    attributes: {
-        id: 'fileSharingModal',
-        class: 'modal fade'
-    },
-
-    events: {
-        'click button[data-action="cancel"]': 'hide',
-        'click td.remove-sharing': 'removeUser',
-        'click button[data-action="shareLinkToggle"]': 'shareLinkToggle',
-        'click button[data-action="findUser"]': 'findUser',
-        'click .users-list li': 'selectUser'
-
-    },
-
-    initialize: function initialize() {
-        this.$el.appendTo('body');
-    },
-
-    render: function render(model) {
-        this.model = model;
-
-        var data = {
-            data: this.model.toJSON(),
-            localization: App.config.localizationArray
-        };
-
-        this.$el.html(this.template(data));
-
-        return this;
-    },
-
-    show: function show() {
-        var model = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-        if (model != null) {
-            this.render(model);
-        }
-
-        this.$el.show().addClass('show');
-    },
-
-    hide: function hide() {
-        this.$el.hide().removeClass('show');
-    },
-
-    removeUser: function removeUser(event) {
-        var userId = $(event.target).parents('tr').attr('data-user-id');
-        var that = this;
-
-        $(this.model.attributes.share_users).each(function (k, v) {
-            if (v.id == userId) {
-                delete that.model.attributes.share_users[k];
-                return false;
-            }
-        });
-
-        this.model.safeSave();
-        this.render(this.model);
-    },
-
-    shareLinkToggle: function shareLinkToggle(event) {
-        if (!this.model.attributes.share_link) {
-            this.model.attributes.share_link = true;
-        } else {
-            this.model.attributes.share_link = false;
-        }
-
-        var that = this;
-        this.model.safeSave({}, {
-            afterSuccess: function afterSuccess() {
-                that.render(that.model);
-            }
-        });
-    },
-
-    findUser: function findUser(event) {
-        var userName = this.$el.find('input.user-search').val();
-        var usersList = this.$el.find('.users-list');
-
-        $.get('/api/v1/user/find/' + userName).done(function (response) {
-            usersList.find('ul').empty();
-
-            if (response.length > 0) {
-                usersList.show();
-
-                $(response).each(function (k, v) {
-                    $('<li>').html(v.name).attr('data-user-id', v.id).appendTo(usersList.find('ul'));
-                });
-            } else {
-                usersList.hide();
-            }
-        }).fail(function (response) {
-            YourCloud.addAlert(response.responseJSON.message, 'warning');
-        });
-    },
-
-    selectUser: function selectUser(event) {
-        var userId = $(event.target).attr('data-user-id');
-        var userName = $(event.target).html();
-        this.$el.find('.users-list').hide();
-
-        this.model.attributes.share_users.push({
-            name: userName,
-            id: userId
-        });
-
-        var that = this;
-        this.model.safeSave({}, {
-            afterSuccess: function afterSuccess() {
-                that.render(that.model);
-            }
-        });
-    }
-});
-
-window.App.shareModalView = new App.ShareModalView();
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports) {
-
-module.exports = "<div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n        <div class=\"modal-header\">\n            <h5 class=\"modal-title\">{{= localization.modal_sharing_title}}</h5>\n            <button type=\"button\" class=\"close\" data-action=\"cancel\">\n                <span aria-hidden=\"true\">&times;</span>\n            </button>\n        </div>\n        <div class=\"modal-body\">\n            <h5>{{= localization.modal_sharing_by_link}}</h5>\n            <div class=\"input-group share-link\">\n                <input class=\"form-control\" type=\"text\" readonly placeholder=\"{{= localization.modal_sharing_by_link_empty}}\" value=\"{{= data.share_link? location.origin + '/download/share/' + data.share_link : '' }}\">\n                <span class=\"input-group-btn\">\n                    <button class=\"btn btn-success\" type=\"button\" data-action=\"shareLinkToggle\">\n                        <i class=\"fas fa-times\"></i>\n                    </button>\n                </span>\n            </div>\n            <hr>\n\n            <h5>{{= localization.modal_sharing_for_user}}</h5>\n            <div class=\"input-group share-for-user\">\n                <input class=\"form-control user-search\" type=\"text\" placeholder=\"{{= localization.modal_sharing_for_user_empty}}\">\n                <span class=\"input-group-btn\">\n                    <button class=\"btn btn-primary\" type=\"button\" data-action=\"findUser\">\n                        <i class=\"fas fa-search\"></i>\n                    </button>\n                </span>\n                <div class=\"users-list\">\n                    <ul>\n                        <li>User1</li>\n                        <li>User2</li>\n                    </ul>\n                </div>\n            </div>\n\n            <table class=\"table table-hover mt-3 shared-users\">\n                <thead>\n                    <tr>\n                        <th scope=\"col\">{{= localization.modal_sharing_user_nickname}}</th>\n                        <th scope=\"col\" class=\"w-25 text-center\">{{= localization.modal_sharing_user_remove}}</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    {{ _.each(data.share_users, function(user) { }}\n                    {{ if(! user) return; }}\n                    <tr data-user-id=\"{{= user.id }}\">\n                        <td class=\"user-name\">{{= user.name }}</td>\n                        <td class=\"remove-sharing text-center\" role=\"button\">\n                            <i class=\"fas fa-unlink\"></i>\n                        </td>\n                    </tr>\n                    {{ }); }}\n                </tbody>\n            </table>\n        </div>\n        <div class=\"modal-footer\">\n            <button type=\"button\" class=\"btn btn-primary\" data-action=\"cancel\">Close</button>\n        </div>\n    </div>\n</div>\n";
-
-/***/ }),
-/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4477,10 +3609,10 @@ function __guardMethod__(obj, methodName, transform) {
     return undefined;
   }
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19)(module)))
 
 /***/ }),
-/* 33 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -4508,14 +3640,14 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 34 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-window.App.dropzonejs_config = {
-    url: window.location.href,
+window.App.dropzonejsConfig = {
+    url: '/api/v1',
     parallelUploads: 1,
     previewsContainer: '#dropzonejs-container',
     previewTemplate: $('#dropzonejs-template').html(),
@@ -4543,9 +3675,15 @@ window.App.dropzonejs_config = {
             });
         }, 3000, file);
 
-        file = FileList.addFileToList(data).addClass('active');
+        if (App.config.debug) {
+            console.info('[DropzoneJS] Recived file: ' + JSON.stringify(data));
+        }
 
-        YourCloud.srollTo(file);
+        App.files.add(data);
+        App.files.render();
+        App.files.sortViews();
+
+        YourCloud.srollTo($('[data-file-id="' + data.id + '"]'));
     },
     sending: function sending(file, xhr) {
         $('#dropzonejs-container .dz-complete').remove();
@@ -4559,14 +3697,905 @@ window.App.dropzonejs_config = {
     }
 };
 
-window.App.enable_dropzonejs = function () {
-    var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '#content';
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
 
-    $(container).dropzone(App.dropzonejs_config);
+window.App = $.extend(window.App, {
+    dropzone: new Dropzone('#content', App.dropzonejsConfig),
+    selectAllCheckbox: $('#checkbox-select-all'),
+    fileContainer: '#file-table',
+    fileClass: '.file-view',
+    fileUploadApiUrl: '/api/v1/file/upload/',
+    currentDir: {},
+    currentDirConfig: {
+        id: 0,
+        apiUrl: 'files',
+        createFolder: false,
+        createFile: false,
+
+        fileCreating: function fileCreating() {
+            var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+            if (status == null) {
+                return this.createFile && this.createFolder;
+            }
+
+            this.createFile = status;
+            this.createFolder = status;
+        }
+    }
+});
+
+__webpack_require__(22);
+__webpack_require__(23);
+__webpack_require__(24);
+
+__webpack_require__(25);
+__webpack_require__(27);
+__webpack_require__(28);
+__webpack_require__(32);
+__webpack_require__(33);
+__webpack_require__(34);
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+App.selectAllCheckbox.bind('check', function () {
+    $(this).find('[data-fa-processed]').attr('data-icon', 'check-square');
+});
+
+App.selectAllCheckbox.bind('uncheck', function () {
+    $(this).find('[data-fa-processed]').attr('data-icon', 'square');
+});
+
+// Select All event
+App.selectAllCheckbox.click(function (event) {
+    var icon = $(this).find('[data-fa-processed]');
+    if (icon.attr('data-icon') == 'square') {
+        App.selectAllCheckbox.trigger('check');
+        $('#file-table tbody tr').addClass('active');
+    } else {
+        App.selectAllCheckbox.trigger('uncheck');
+        $('#file-table tbody tr').removeClass('active');
+    }
+});
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+App.createBreadcrumb = function () {
+    var parents = App.currentDir.get('parents');
+    var template = $('<li class="breadcrumb-item"><a></a></li>');
+    var container = $('#breadcrumb ol').empty();
+
+    var currentView = $('#left-menu a.active').clone();
+    currentView.find('svg').remove();
+
+    // View item
+    template.clone().find('a').attr('href', currentView.attr('href')).html(currentView.html()).click(App.router.takeRederict).parent().appendTo(container);
+
+    $(parents).each(function (k, v) {
+        var item = template.clone();
+        item.find('a').attr('href', '/files?dirId=' + v.id).html(v.name).click(App.router.takeRederict);
+
+        container.append(item);
+    });
+
+    if (App.currentDir.get('name')) {
+        template.clone().find('a').html(App.currentDir.get('name')).click(App.router.takeRederict).parent().addClass('active').appendTo(container);
+    }
 };
 
 /***/ }),
+/* 24 */
+/***/ (function(module, exports) {
+
+window.App.loadFolder = function (dirId) {
+    var urlRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'files';
+    var withUrlReplace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    var url = 'api/v1/' + urlRoot;
+
+    App.currentDir.apiUrl = url;
+    App.currentDir.id = dirId;
+
+    if (dirId != null) {
+        url += '/' + dirId;
+    } else {
+        dirId = 0;
+    }
+
+    App.currentDir = new App.FileModel({ id: dirId });
+    App.currentDir.fetch({
+        success: App.createBreadcrumb
+    });
+
+    var files = new App.FilesCollection();
+    files.urlRoot = url;
+
+    files.fetchAndRender();
+
+    url = document.createElement('a');
+    url.href = location.href;
+
+    if (withUrlReplace) {
+        window.App.router.navigate(url.pathname + '?dirId=' + dirId);
+    }
+};
+
+window.App.refreshFolder = function () {
+    App.loadFolder(App.currentDir.dirId, App.currentDir.apiUrl);
+};
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+window.App.ContextMenuView = Backbone.View.extend({
+    attributes: {
+        id: 'file-context-menu'
+    },
+
+    contextMenu: true,
+    parent: '#content',
+    template: _.template(__webpack_require__(26)),
+    model: false,
+
+    events: {
+        'click [data-action="newFolder"]': 'newFolder',
+        'click [data-action="newFile"]': 'newFile',
+        'click [data-action="share"]': 'share',
+        'click [data-action="setTag"]': 'setTag',
+        'click [data-action="rename"]': 'rename',
+        'click [data-action="deleteFile"]': 'deleteFile',
+        'click [data-action="downloadFile"]': 'downloadFile'
+    },
+
+    initialize: function initialize() {
+        this.$el.hide();
+        $(this.parent).append(this.$el);
+        $(this.parent).on('contextmenu', this.show);
+        $(this.parent).on('click', this.hide);
+    },
+
+    render: function render() {
+        var data = {
+            localization: App.config.localizationArray.folderView
+        };
+
+        this.$el.html(this.template(data));
+
+        return this;
+    },
+
+    show: function show(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        var that = App.contextMenu;
+        if (this.contextMenu) {
+            that.model = false;
+        } else {
+            if (typeof this.model !== 'undefined') {
+                that.model = this.model;
+            } else {
+                that.model = false;
+            }
+        }
+
+        that.render();
+        that.selectTag();
+
+        if (that.model == false) {
+            var disabledButtons = ['downloadFile', 'copy', 'rename', 'tag', 'deleteFile', 'share'];
+
+            that.disableButtons(disabledButtons);
+        }
+
+        var posX = event.pageX - that.$el.parent().position().left;
+        var posY = event.pageY - that.$el.parent().position().top;
+        var menuHeight = that.$el.height();
+
+        if (posY + menuHeight + 50 > $(document).height()) {
+            posY -= menuHeight;
+        }
+
+        that.$el.css('top', posY).css('left', posX).show();
+
+        return App.contextMenu;
+    },
+
+    hide: function hide() {
+        App.contextMenu.$el.hide();
+
+        return App.contextMenu;
+    },
+
+    disableButtons: function disableButtons(list) {
+        var that = this;
+        $(list).each(function (k, v) {
+            that.$el.find('[data-action="' + v + '"]').attr('disabled', true);
+        });
+
+        return this;
+    },
+
+    selectTag: function selectTag() {
+        if (!this.model) return;
+
+        var tag_id = this.model.attributes.tag_id;
+        if (typeof tag_id !== 'undefined') {
+            this.$el.find('#tag-context-menu [data-tag-id]').removeClass('active');
+            this.$el.find('#tag-context-menu [data-tag-id="' + tag_id + '"]').addClass('active');
+        } else {
+            this.$el.find('#tag-context-menu [data-tag-id]').removeClass('active');
+        }
+    },
+
+    downloadFile: function downloadFile() {
+        this.model.downloadFile();
+    },
+
+    deleteFile: function deleteFile(event) {
+        this.model.destroy({
+            error: function error(model, response, options) {
+                YourCloud.addAlert(response.responseJSON.message, 'warning');
+                App.files.push(model);
+                App.files.render();
+            }
+        });
+    },
+
+    newFile: function newFile(event) {
+        var model = App.files.add({
+            type: 1,
+            name: App.config.localizationArray.new_file_name,
+            size: '-',
+            updated_at: '-'
+        });
+
+        App.files.render();
+        model.trigger('showRenameField');
+    },
+
+    newFolder: function newFolder(event) {
+        var model = App.files.add({
+            type: 0,
+            name: App.config.localizationArray.new_folder_name,
+            size: '-',
+            updated_at: '-'
+        });
+
+        App.files.render();
+        model.trigger('showRenameField');
+    },
+
+    rename: function rename(event) {
+        this.model.trigger('showRenameField');
+    },
+
+    setTag: function setTag(event) {
+        var tagId = $(event.target).data('tag-id');
+        var file = this.model;
+
+        if (file.attributes.tag_id == tagId) {
+            tagId = 0;
+        }
+
+        file.attributes.tag_id = tagId;
+        file.safeSave();
+        file.trigger('change');
+    },
+
+    share: function share(event) {
+        App.shareModalView.render(this.model);
+        App.shareModalView.show();
+    }
+});
+
+App.contextMenu = new App.ContextMenuView();
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"list-group\">\n    <button data-action=\"newFolder\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-folder\"></i>{{= localization.context_new_folder }}</button>\n    <button data-action=\"newFile\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-file-alt\"></i>{{= localization.context_new_file }}</button>\n    <button data-action=\"share\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-share-alt\"></i>{{= localization.context_share }}</button>\n    <div id=\"tag-context-menu\">\n        <button type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-star\"></i>{{= localization.context_tag }}</button>\n        <div class=\"list-group\">\n            <button data-action=\"setTag\" data-tag-id=\"1\" type=\"button\" class=\"list-group-item list-group-item-action text-primary\"><i class=\"fas fa-circle\"></i>{{= localization.tag_blue }}</button>\n            <button data-action=\"setTag\" data-tag-id=\"2\" type=\"button\" class=\"list-group-item list-group-item-action text-success\"><i class=\"fas fa-circle\"></i>{{= localization.tag_green }}</button>\n            <button data-action=\"setTag\" data-tag-id=\"3\" type=\"button\" class=\"list-group-item list-group-item-action text-danger\"><i class=\"fas fa-circle\"></i>{{= localization.tag_red }}</button>\n            <button data-action=\"setTag\" data-tag-id=\"4\" type=\"button\" class=\"list-group-item list-group-item-action text-warning\"><i class=\"fas fa-circle\"></i>{{= localization.tag_yellow }}</button>\n            <button data-action=\"setTag\" data-tag-id=\"5\" type=\"button\" class=\"list-group-item list-group-item-action text-info\"><i class=\"fas fa-circle\"></i>{{= localization.tag_azure }}</button>\n        </div>\n    </div>\n\n    <button data-action=\"rename\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-pencil-alt\"></i>{{= localization.context_rename }}</button>\n    <button data-action=\"deleteFile\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-trash-alt\"></i>{{= localization.context_delete }}</button>\n    <button data-action=\"downloadFile\" type=\"button\" class=\"list-group-item list-group-item-action\"><i class=\"fas fa-download\"></i>{{= localization.context_download }}</button>\n</div>\n";
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports) {
+
+window.App.FileModel = Backbone.Model.extend({
+    urlRoot: '/api/v1/file',
+
+    safeSave: function safeSave() {
+        var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+        options.success = function (model, response, options) {
+            App.files.sortViews();
+
+            if (options.afterSuccess) {
+                options.afterSuccess(model, response, options);
+            }
+        };
+
+        options.error = function (model, response, options) {
+            console.error(JSON.stringify(response));
+            YourCloud.addAlert(response.responseJSON['message'], 'warning');
+            model.fetch();
+
+            if (options.afterError) {
+                options.afterSuccess(model, response, options);
+            }
+        };
+
+        this.save(attributes, options);
+
+        App.files.sortViews();
+    },
+
+    downloadFile: function downloadFile() {
+        location.replace('/download/' + this.attributes.id);
+    }
+});
+
+var createNewFile = function createNewFile() {
+    var newFile = new App.FileModel({ name: 'New File', parent_id: App.currentDirId, type: 1 });
+
+    if (newFile.safeSave().statusText == 'OK') {
+        App.files.push(newFile);
+    }
+};
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// require('../FileModel');
+
+var fileEventCallbacks = __webpack_require__(29);
+
+window.App.FileView = Backbone.View.extend({
+    attributes: {
+        role: 'link'
+    },
+    tagName: 'tr',
+    parent: '#file-table tbody',
+    template: _.template(__webpack_require__(30)),
+    renameFieldTemplate: _.template(__webpack_require__(31)),
+    className: 'file-view',
+
+    events: {
+        'click': fileEventCallbacks.click,
+        'dblclick': fileEventCallbacks.dblClick,
+        'click #file-favorite-btn': fileEventCallbacks.favoriteBtnClick,
+        'click .file-rename button[data-action="cancel"]': 'render',
+        'click .file-rename button[data-action="save"]': fileEventCallbacks.renameSave,
+        'contextmenu': App.contextMenu.show
+    },
+
+    initialize: function initialize() {
+        this.model.on('change', this.render, this);
+        this.model.on('remove', this.remove, this);
+        this.model.on('showRenameField', this.showRenameField, this);
+        this.on('remove', fileEventCallbacks.change);
+
+        return this;
+    },
+
+    render: function render() {
+        this.$el.html(this.template(this.model.toJSON()));
+
+        this.setIcon();
+
+        this.setAttributes();
+
+        return this;
+    },
+
+    append: function append() {
+        var parent = $(this.parent);
+
+        parent.append(this.render().$el);
+
+        return this;
+    },
+
+    setIcon: function setIcon() {
+        var icon = '';
+
+        if (this.model.attributes.type == 0) {
+            icon = 'fa-folder';
+        } else {
+            icon = 'fa-file';
+        }
+
+        this.$el.find('.file-icon i').first().addClass(icon);
+
+        return this;
+    },
+
+    showRenameField: function showRenameField() {
+        this.$el.find('.file-name').html(this.renameFieldTemplate(this.model.toJSON()));
+        this.$el.addClass('active-static');
+
+        return this;
+    },
+
+    setAttributes: function setAttributes() {
+        this.$el.attr('data-tag-id', this.model.attributes.tag_id);
+        this.$el.attr('data-file-id', this.model.attributes.id);
+        this.$el.attr('data-file-type', this.model.attributes.type);
+        this.$el.attr('data-file-name', this.model.attributes.name);
+        this.$el.attr('data-file-size', this.model.attributes.size);
+        this.$el.attr('data-file-last-modify', this.model.attributes.updated_at);
+        this.$el.attr('data-favorite', this.model.attributes.favorite ? 'true' : 'false');
+        this.$el.attr('data-link-share', this.model.attributes.share_link ? 'true' : 'false');
+        if (this.model.attributes.share_users) {
+            this.$el.attr('data-user-share', this.model.attributes.share_users.length > 0 ? 'true' : 'false');
+        }
+
+        return this;
+    },
+
+    remove: function remove() {
+        this.trigger('remove', this);
+        return Backbone.View.prototype.remove.apply(this, arguments);
+    }
+
+});
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+module.exports = {
+    change: function change(event) {
+        $(App.fileContainer).attr('data-files-count', $(App.fileContainer).find('tbody tr').length - 1);
+    },
+
+    click: function click(event) {
+        var el = this.$el;
+
+        // Uncheck select All checkbox
+        if (!el.hasClass('active-static')) {
+            // Set file highlight
+            if (el.hasClass('active')) {
+                // Remove highlight
+                App.selectAllCheckbox.trigger('uncheck');
+            } else {
+                // Add highlight
+                if ($(App.fileContainer).find(App.fileClass).not('.active').length == 1) {
+                    // All files are highlighted
+                    App.selectAllCheckbox.trigger('check');
+                }
+            }
+
+            // Add or remove highlight
+            el.toggleClass('active');
+        }
+    },
+
+    dblClick: function dblClick(event) {
+        if (this.model.attributes.type == 0) {
+            App.router.navigate('files?dirId=' + this.model.attributes.id, { trigger: true });
+        }
+    },
+
+    renameSave: function renameSave(event) {
+        var newName = this.$el.find('.file-rename input').val();
+
+        this.model.attributes.name = newName;
+        this.model.safeSave();
+
+        this.$el.removeClass('active-static');
+        this.$el.addClass('active');
+        App.files.sortViews();
+    },
+
+    favoriteBtnClick: function favoriteBtnClick(event) {
+        event.stopPropagation();
+
+        if (this.model.attributes.favorite) {
+            this.model.attributes.favorite = 0;
+        } else {
+            this.model.attributes.favorite = 1;
+        }
+
+        this.model.safeSave();
+    }
+};
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+module.exports = "\n<td class=\"file-icon\">\n    <span class=\"fa-layers\">\n        <i class=\"fas\"></i>\n        <i class=\"fas fa-circle\" data-fa-transform=\"shrink-10 up-5 left-7\" data-tag-id=\"null\"></i>\n    </span>\n</td>\n<td class=\"file-name\">{{= name }}</td>\n<td class=\"file-controls cell-one-row\" id=\"file-controls\">\n    <div id=\"file-indicators\">\n        <i class=\"fas fa-user share-user-icon\"></i>\n        <i class=\"fas fa-link share-link-icon\"></i>\n    </div>\n    <button id=\"file-favorite-btn\">\n        <i class=\"fas fa-star\"></i>\n    </button>\n</td>\n<td class=\"file-size cell-one-row\">{{= size }}</td>\n<td class=\"file-updated-at cell-one-row\">{{= updated_at }}</td>\n";
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"input-group file-rename\">\n    <input type=\"text\" class=\"form-control\" placeholder=\"name\" value=\"{{= name }}\">\n    <span class=\"input-group-btn\">\n        <button class=\"btn btn-secondary\" type=\"button\" data-action=\"cancel\">\n            <i class=\"fas fa-times\"></i>\n        </button>\n        <button class=\"btn btn-secondary\" type=\"button\" data-action=\"save\">\n            <i class=\"fas fa-check\"></i>\n        </button>\n    </span>\n</div>";
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+window.App.FilesCollection = Backbone.Collection.extend({
+    model: App.FileModel,
+    urlRoot: '/api/v1/files',
+    views: null,
+    lastSortMultipler: 1,
+    lastSortAttr: 'data-file-name',
+    url: function url() {
+        var url = location.origin + '/' + this.urlRoot;
+
+        return url;
+    },
+
+    createViewsList: function createViewsList() {
+        var views = [];
+
+        this.each(function (file) {
+            views.push(new App.FileView({ model: file }));
+        });
+
+        return views;
+    },
+
+    render: function render() {
+        var refresh = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        if (refresh) {
+            this.each(function (model) {
+                model.trigger('remove');
+            });
+        }
+
+        $(this.createViewsList()).each(function (k, v) {
+            v.append();
+        });
+
+        this.sortViews();
+
+        $(App.fileContainer).attr('data-files-count', this.models.length || 0);
+
+        return this;
+    },
+
+    fetchAndRender: function fetchAndRender() {
+        var that = this;
+        this.fetch({
+            success: function success(collection, response, options) {
+                if (App.files) {
+                    App.files.remove(App.files.models);
+                }
+
+                that.render(false);
+
+                window.App.files = that;
+            },
+
+            error: function error(collection, response, options) {
+                YourCloud.addAlert(response.responseJSON.message, 'danger');
+                console.error(JSON.stringify(response));
+            }
+        });
+
+        return this;
+    },
+
+    setParentId: function setParentId(id) {
+        this.parent_id = id;
+    },
+
+    sortViews: function sortViews() {
+        var asc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        this.sortViewsBy(this.lastSortAttr, this.lastSortMultipler === -1 ? false : true);
+    },
+
+    sortViewsBy: function sortViewsBy() {
+        var sortAttr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+        var asc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+        var files = $(App.fileContainer).find('tbody tr[data-file-type="1"]');
+        var folders = $(App.fileContainer).find('tbody tr[data-file-type="0"]');
+
+        if (!sortAttr) {
+            sortAttr == 'data-file-name';
+        }
+
+        this.lastSortAttr = sortAttr;
+
+        var sortMultipler = asc ? 1 : -1;
+        this.lastSortMultipler = sortMultipler;
+
+        folders.sort(function (a, b) {
+            return $(a).attr(sortAttr).localeCompare($(b).attr(sortAttr), {}, { numeric: true }) * sortMultipler;
+        }).appendTo(App.fileContainer);
+
+        files.sort(function (a, b) {
+            return $(a).attr(sortAttr).localeCompare($(b).attr(sortAttr), {}, { numeric: true }) * sortMultipler;
+        }).appendTo(App.fileContainer);
+    },
+
+    toggleSortViews: function toggleSortViews() {
+        var sortAttr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+        var negativeMultipler = this.lastSortMultipler == 1 ? false : true;
+        if (!sortAttr) {
+            this.sortViews(negativeMultipler);
+        } else if (sortAttr == this.lastSortAttr) {
+            this.sortViewsBy(sortAttr, negativeMultipler);
+        } else {
+            this.sortViewsBy(sortAttr);
+        }
+    }
+});
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports) {
+
+window.App.Router = Backbone.Router.extend({
+    routes: {
+        'files(?*query)': 'main',
+        'files/favorites(?*query)': 'favorites',
+        'files/tag/:id(?*query)': 'tag',
+        'files/sharedforme': 'shareForMe',
+        'files/sharedbyme': 'shareByMe'
+    },
+
+    getFromQuery: function getFromQuery(parameter, query) {
+        var parameterValue = null;
+
+        if (query == null) {
+            return parameterValue;
+        }
+
+        if (parameter.charAt(parameter.length - 1) != '=') {
+            parameter += '=';
+        }
+
+        var parameterPos = query.indexOf(parameter);
+
+        if (parameterPos > -1) {
+            var valueStart = parameterPos + parameter.length;
+
+            var valueEnd = query.indexOf('&', valueStart);
+            valueEnd = valueEnd < 1 ? query.length : valueEnd;
+
+            parameterValue = query.substr(valueStart, valueEnd);
+        }
+
+        return parameterValue;
+    },
+
+    takeRederict: function takeRederict(event) {
+        event.preventDefault();
+
+        App.router.navigate($(this).attr('href'), { trigger: true });
+    },
+
+    main: function main(query) {
+        var dirId = this.getFromQuery('dirId', query) || 0;
+
+        App.dropzone.enable();
+        App.dropzone.options.url = App.fileUploadApiUrl + dirId;
+
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files"]').addClass('active');
+
+        window.App.loadFolder(dirId, 'files');
+
+        App.currentDirConfig.fileCreating(true);
+    },
+
+    favorites: function favorites(query) {
+        App.dropzone.disable();
+
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files/favorites"]').addClass('active');
+
+        window.App.loadFolder(null, 'files/favorites');
+
+        App.currentDirConfig.fileCreating(false);
+    },
+
+    tag: function tag(id, query) {
+        App.dropzone.disable();
+
+        if (id == null) {
+            return this.main(query);
+        }
+
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files/tag/' + id + '"]').addClass('active');
+
+        window.App.loadFolder(null, 'files/tag/' + id);
+
+        App.currentDirConfig.fileCreating(false);
+    },
+
+    shareForMe: function shareForMe() {
+        App.dropzone.disable();
+
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files/sharedforme"]').addClass('active');
+
+        window.App.loadFolder(null, 'files/shareforme');
+
+        App.currentDirConfig.fileCreating(false);
+    },
+
+    shareByMe: function shareByMe() {
+        App.dropzone.disable();
+
+        $('#left-menu a').removeClass('active');
+        $('#left-menu a[href="/files/sharedbyme"]').addClass('active');
+
+        window.App.loadFolder(null, 'files/sharebyme');
+
+        App.currentDirConfig.fileCreating(false);
+    }
+});
+
+window.App.router = new App.Router();
+Backbone.history.start({ pushState: true });
+
+// Menu bindings
+$('#left-menu a').click(App.router.takeRederict);
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+window.App.ShareModalView = Backbone.View.extend({
+    model: false,
+    template: _.template(__webpack_require__(35)),
+    attributes: {
+        id: 'fileSharingModal',
+        class: 'modal fade'
+    },
+
+    events: {
+        // 'click button[data-action="cancel"]': 'hide',
+        'click td.remove-sharing': 'removeUser',
+        'click button[data-action="shareLinkToggle"]': 'shareLinkToggle',
+        'click button[data-action="findUser"]': 'findUser',
+        'click .users-list li': 'selectUser'
+
+    },
+
+    initialize: function initialize() {
+        this.$el.appendTo('body');
+    },
+
+    render: function render(model) {
+        this.model = model;
+
+        var data = {
+            data: this.model.toJSON(),
+            localization: App.config.localizationArray.folderView
+        };
+
+        this.$el.html(this.template(data));
+
+        return this;
+    },
+
+    show: function show() {
+        var model = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        if (model != null) {
+            this.render(model);
+        }
+
+        this.$el.modal('show');
+
+        return this;
+    },
+
+    hide: function hide() {
+        this.$el.modal('hide');
+
+        return this;
+    },
+
+    removeUser: function removeUser(event) {
+        var userId = $(event.target).parents('tr').attr('data-user-id');
+        var that = this;
+
+        $(this.model.attributes.share_users).each(function (k, v) {
+            if (v.id == userId) {
+                delete that.model.attributes.share_users[k];
+                return false;
+            }
+        });
+
+        this.model.safeSave();
+        this.render(this.model);
+
+        return this;
+    },
+
+    shareLinkToggle: function shareLinkToggle(event) {
+        if (!this.model.attributes.share_link) {
+            this.model.attributes.share_link = true;
+        } else {
+            this.model.attributes.share_link = false;
+        }
+
+        var that = this;
+        this.model.safeSave({}, {
+            afterSuccess: function afterSuccess() {
+                that.render(that.model);
+            }
+        });
+
+        return this;
+    },
+
+    findUser: function findUser(event) {
+        var userName = this.$el.find('input.user-search').val();
+        var usersList = this.$el.find('.users-list');
+
+        $.get('/api/v1/user/find/' + userName).done(function (response) {
+            usersList.find('ul').empty();
+
+            if (response.length > 0) {
+                usersList.show();
+
+                $(response).each(function (k, v) {
+                    $('<li>').html(v.name).attr('data-user-id', v.id).appendTo(usersList.find('ul'));
+                });
+            } else {
+                usersList.hide();
+            }
+        }).fail(function (response) {
+            YourCloud.addAlert(response.responseJSON.message, 'warning');
+        });
+
+        return this;
+    },
+
+    selectUser: function selectUser(event) {
+        var userId = $(event.target).attr('data-user-id');
+        var userName = $(event.target).html();
+        this.$el.find('.users-list').hide();
+
+        this.model.attributes.share_users.push({
+            name: userName,
+            id: userId
+        });
+
+        var that = this;
+        this.model.safeSave({}, {
+            afterSuccess: function afterSuccess() {
+                that.render(that.model);
+            }
+        });
+
+        return this;
+    }
+});
+
+window.App.shareModalView = new App.ShareModalView();
+
+/***/ }),
 /* 35 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n        <div class=\"modal-header\">\n            <h5 class=\"modal-title\">{{= localization.modal_sharing_title}}</h5>\n            <button type=\"button\" class=\"close\" data-dismiss=\"modal\">\n                <span aria-hidden=\"true\">&times;</span>\n            </button>\n        </div>\n        <div class=\"modal-body\">\n            <h5>{{= localization.modal_sharing_by_link}}</h5>\n            <div class=\"input-group share-link\">\n                <input class=\"form-control\" type=\"text\" readonly placeholder=\"{{= localization.modal_sharing_by_link_empty}}\" value=\"{{= data.share_link? location.origin + '/download/share/' + data.share_link : '' }}\">\n                <span class=\"input-group-btn\">\n                    <button class=\"btn btn-success\" type=\"button\" data-action=\"shareLinkToggle\">\n                        <i class=\"fas fa-times\"></i>\n                    </button>\n                </span>\n            </div>\n            <hr>\n\n            <h5>{{= localization.modal_sharing_for_user}}</h5>\n            <div class=\"input-group share-for-user\">\n                <input class=\"form-control user-search\" type=\"text\" placeholder=\"{{= localization.modal_sharing_for_user_empty}}\">\n                <span class=\"input-group-btn\">\n                    <button class=\"btn btn-primary\" type=\"button\" data-action=\"findUser\">\n                        <i class=\"fas fa-search\"></i>\n                    </button>\n                </span>\n                <div class=\"users-list\">\n                    <ul>\n                        <li>User1</li>\n                        <li>User2</li>\n                    </ul>\n                </div>\n            </div>\n\n            <table class=\"table table-hover mt-3 shared-users\">\n                <thead>\n                    <tr>\n                        <th scope=\"col\">{{= localization.modal_sharing_user_nickname}}</th>\n                        <th scope=\"col\" class=\"w-25 text-center\">{{= localization.modal_sharing_user_remove}}</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    {{ _.each(data.share_users, function(user) { }}\n                    {{ if(! user) return; }}\n                    <tr data-user-id=\"{{= user.id }}\">\n                        <td class=\"user-name\">{{= user.name }}</td>\n                        <td class=\"remove-sharing text-center\" role=\"button\">\n                            <i class=\"fas fa-unlink\"></i>\n                        </td>\n                    </tr>\n                    {{ }); }}\n                </tbody>\n            </table>\n        </div>\n        <div class=\"modal-footer\">\n            <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Close</button>\n        </div>\n    </div>\n</div>\n";
+
+/***/ }),
+/* 36 */
 /***/ (function(module, exports) {
 
 $(App.fileContainer).find('thead [data-sort-by]').click(function (event) {

@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
-class MainController extends Controller
+class SettingsController extends Controller
 {
-    function index(Request $request) {
+    public function index(Request $request) {
         App::setlocale(Auth::user()->lang);
-        return view('folder');
+        return view('settings');
     }
 }

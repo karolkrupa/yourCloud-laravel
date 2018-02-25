@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller as Controller;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 
 class ConfigController extends Controller
 {
@@ -14,9 +15,15 @@ class ConfigController extends Controller
      */
     public function getConfig()
     {
-        $localizationArray = __('folderView');
+        App::setlocale(Auth::user()->lang);
+        $localizationArray = [
+            'folderView' => __('folderView'),
+            'settingsView' => __('settingsView'),
+        ];
         $config = [
-            'lang' => App::getLocale(),
+            'debug' => config('app.debug'),
+            'lang' => Auth::user()->lang,
+            'availableLangs' => config('app.languages'),
             'localizationArray' => $localizationArray,
         ];
 

@@ -1,0 +1,12 @@
+@import "../variables";
+
+.card {
+  //background: $secondary-color;
+  background: transparent;
+  border-color: transparent;
+}
+
+
+#your-cloud-informations {
+  color: lighten($background-color, 15);
+}

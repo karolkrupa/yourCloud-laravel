@@ -21,6 +21,7 @@
     <a data-overlap="shared_by_me" href="/files/sharedbyme" class="btn"><i class="fas fa-share-alt-square"></i>@lang('folderView.menu_shared_by_me')</a>
 @endsection
 
+
 @section('navbar-right')
     <div id="dropzonejs-container">
 
@@ -106,6 +107,6 @@
     @parent
 
     <script src="{{ asset('js/folderView.js') }}">
-        App.enable_dropzonejs();
+
     </script>
 @endsection

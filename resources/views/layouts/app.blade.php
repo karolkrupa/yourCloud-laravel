@@ -16,6 +16,15 @@
             <div class="row align-items-center h-100">
 
                 <div class="col" id="navbar-left">
+                    <div class="dropdown d-inline-block">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="far fa-user mr-2" style="font-size: 17px"></i>@lang('app.profile')
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="/settings/general"><i class="fas fa-cog mr-1"></i>@lang('app.settings')</a>
+                            <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt mr-1"></i>@lang('app.logout')</a>
+                        </div>
+                    </div>
                     @yield('navbar-left')
                 </div>
 

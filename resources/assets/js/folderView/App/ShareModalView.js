@@ -7,7 +7,7 @@ window.App.ShareModalView = Backbone.View.extend({
     },
 
     events: {
-        'click button[data-action="cancel"]': 'hide',
+        // 'click button[data-action="cancel"]': 'hide',
         'click td.remove-sharing': 'removeUser',
         'click button[data-action="shareLinkToggle"]': 'shareLinkToggle',
         'click button[data-action="findUser"]': 'findUser',
@@ -24,7 +24,7 @@ window.App.ShareModalView = Backbone.View.extend({
 
         let data = {
             data: this.model.toJSON(),
-            localization: App.config.localizationArray,
+            localization: App.config.localizationArray.folderView,
         };
 
         this.$el.html(this.template(data));
@@ -37,11 +37,15 @@ window.App.ShareModalView = Backbone.View.extend({
             this.render(model);
         }
 
-        this.$el.show().addClass('show');
+        this.$el.modal('show');
+
+        return this;
     },
 
     hide: function() {
-        this.$el.hide().removeClass('show');
+        this.$el.modal('hide');
+
+        return this;
     },
 
     removeUser: function(event) {
@@ -57,6 +61,8 @@ window.App.ShareModalView = Backbone.View.extend({
 
         this.model.safeSave();
         this.render(this.model);
+
+        return this;
     },
 
     shareLinkToggle: function(event) {
@@ -72,6 +78,8 @@ window.App.ShareModalView = Backbone.View.extend({
                 that.render(that.model);
             }
         });
+
+        return this;
     },
 
     findUser: function(event) {
@@ -93,6 +101,8 @@ window.App.ShareModalView = Backbone.View.extend({
         }).fail(function(response) {
             YourCloud.addAlert(response.responseJSON.message, 'warning');
         });
+
+        return this;
     },
 
     selectUser: function(event) {
@@ -113,6 +123,8 @@ window.App.ShareModalView = Backbone.View.extend({
                 that.render(that.model);
             }
         });
+
+        return this;
     }
 });
 

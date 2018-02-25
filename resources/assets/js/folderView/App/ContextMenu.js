@@ -27,7 +27,7 @@ window.App.ContextMenuView = Backbone.View.extend({
 
     render: function () {
         let data = {
-            localization: App.config.localizationArray
+            localization: App.config.localizationArray.folderView,
         };
 
         this.$el.html(this.template(data));

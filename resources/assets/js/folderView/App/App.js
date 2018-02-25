@@ -1,9 +1,9 @@
-App.getConfig();
-
 window.App = $.extend(window.App, {
+    dropzone: new Dropzone('#content', App.dropzonejsConfig),
     selectAllCheckbox: $('#checkbox-select-all'),
     fileContainer: '#file-table',
     fileClass: '.file-view',
+    fileUploadApiUrl: '/api/v1/file/upload/',
     currentDir: {},
     currentDirConfig: {
         id: 0,

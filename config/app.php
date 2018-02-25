@@ -230,4 +230,9 @@ return [
         'Zipper' => Chumper\Zipper\Zipper::class
     ],
 
+    'languages' => [
+        'English' => 'en',
+        'Polish' => 'pl',
+    ],
+
 ];

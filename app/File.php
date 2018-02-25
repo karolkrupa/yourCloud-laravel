@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -187,6 +188,34 @@ class File extends Model
             'path' => $path,
             'mime_type' => 'directory',
             'size' => 0
+        ];
+
+        $fileAttr['name'] = self::_getNameIfIsset($fileAttr);
+
+        return $user->files()->save(new File($fileAttr));
+    }
+
+    static public function saveFile(UploadedFile $file, File $parent = null, User $user = null) {
+        if($user == null) {
+            $user = Auth::user();
+        }
+
+        if($parent == null) {
+            $path = $user->id;
+            $parentId = 0;
+        }else {
+            $path = $parent->path;
+            $parentId = $parent->id;
+        }
+
+        $fileAttr = [
+            'parent_id' => $parentId,
+            'name' => $file->getClientOriginalName(),
+            'users_id' => $user->id,
+            'type' => 1,
+            'path' => $file->store($path),
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize()
         ];
 
         $fileAttr['name'] = self::_getNameIfIsset($fileAttr);
